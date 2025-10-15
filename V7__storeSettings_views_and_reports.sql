@@ -126,6 +126,7 @@ select
   o.discount_total,                          -- Tổng giảm giá
   (o.total_amount - o.discount_total) as net_total, -- Tổng tiền thực trả
   p.name as buyer_name,                      -- Tên khách hàng
+  p.sort_name as buyer_sort_name,            -- Tên viết tắt khách hàng
   p.phone as buyer_phone,                    -- SĐT khách hàng
   p.address as buyer_address,                -- Địa chỉ khách hàng
   ss.store_name,                             -- Tên cửa hàng
@@ -168,6 +169,7 @@ select
   o.id as order_id,                          -- ID đơn hàng
   o.created_at as issue_date,                -- Ngày xuất kho
   p.name as receiver_name,                   -- Tên người nhận
+  p.sort_name as receiver_sort_name,         -- Tên viết tắt người nhận
   p.phone as receiver_phone,                 -- SĐT người nhận
   p.address as receiver_address,             -- Địa chỉ người nhận
   ss.store_name,                             -- Tên cửa hàng

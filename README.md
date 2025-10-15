@@ -1,116 +1,137 @@
 # Link sơ đồ class:
-https://mermaid.live/view#pako:eNq1WWlv4zYQ_SuEgF30SILY8dEIaIHsBigCNGix6W6BwoDASLTNRiK1PNx4g_z3DinJkWTqsK36S2wOZ0i-N5yDefFCHhHP98IYS3lL8UrgZMEQfN69Qz_3_OwUvox89IfgSxoTid6jG63WRxqz-ylsoZds0Hx-_Pz57hbRqDTyoARlK0QSTOP9YYYTsj-arjlzDOMoEkTKfYHgcXn6nzQhUuEkRaEgWJEowCoTvy7YCfiNffQRKxzzFcD3iSyJICwkJ2EI9siKi20FxN84nMkFohstGevV_mhEZChoqihntbNnK38QmEXDLxtyzZTYOpcEh4l0qDoWtSNhjkuwL3o0Gw8Gh6cspAlekUCLssN-oKtbEoIkRhusAgEbLEs5uCBmiMoAh4puDnTHCj6fGe2FUZpNd0KhwYYDCvqNBDF-JI6bKNdcqKAGYenQjKjgq9o6luKJWyMVNHTx8aT3Bx-xMLGuJLhj4AFEIKl4-NSNdB1KvE0IU_dErfnBXl6z9bCmaQozjjN2yJ38yHXKWb8VanAVK1Bpb2CgtmkDkbspGxzrhjkJZQEXERGB4hDwSpNuwYEReU4p3M2oegcKxrQ0tyemCR0k6l756HezFZOzHrDJXd_dfPr-pKhr7XXAbDPZo94CBi744UIr7UhFaeZ4gSIi2buwuSyxjuQIbTL3tOYZofWQqqDEm9SPdcJczLfM2W1hSRp8wyqD86g2MU7MQscEQcvNnSJJnxCY-WhzaDRhsCounPSrxkzRSjxrCV0uEMtHrN9jDVErISKPQn08DXyjfpLSontwWisuL2lyzzf8U0zfwK_ELK6OSlu1097EMYf0TTsDWeVO9OK2jEi2itlVNw830T_wrS8VjkvfZ0N1ioralGBZqTH-r-p04qNfOY8kVKYhgSRj46VO05iCu3-gcSxPipl_YUHWXEtySgKsVPA1suzm8733oUnmZ3Mw9W-x16rsDXlhltmQrnvQssO-EUpk0weIUfWqJD--YfZ4uIryC4wEjNfzvB2uZflBs43Cz61idy7pTKZtwa53WCsD3JdtC9ghVLd2IyUkHOmqq_y2i7UkspgyEhQkNdPT3OjYyjygAM0Q4Wvqozu2AUZNN3yPGdSQht-TYtbO4D3fkB7hv4OsttiSs1Eru1uqDXspBVkCRfYZxWnOyCMe1qv5PLJksgbPHza5zH30AEAS9ECUgp2dlkusqdxSv3QijUbgTioxWUGUOOglqeE1qvGByVyEfVeIyBLrWAXtLhFqYd6JHFfXVDA9H65qYp1Gw5H7icS2XDOlv0Tn6Mu4eOY60ubuUWvhjRYeOj__Bb79AN-KByAf-himMGU51NlbVPPsBDO9hG5fAzuZRiFr0LFPKD5aYzkoMFd5J3qkyeLBtL7prB31URrjcHfAygNGo4ZJb4-5a9XeKZp0bIcHvrOhOKcre3Vomo9tGpSQp7Pp2bhztk2TdXLLlLRpSR5DGmcFYU1g1Xsr4x1P_VDbV4U7m2vWZR26pSbHL_Ui7Ri12bBMLrnoe_xSSwMbsD9IbqB7AxVlYbw853fAuzLJu5H3J_UeTTBUmgW_KG7zVd5alQ61vA3I1SrCNs2D3dyhXHQgXXxXynzfFpgyWIqi6Gt3-JpyNVqUZW2KB5_WoZxqEUIwfjvuIC42fSvwjnevxmPsF48-UgKHT51e5tK0BYxs59qlR9mGx9ZFBwRuPkwx14xApcDz9wsl78xbCRp5vhKanHkQkqAgg5-eLQYXnlrD-ReeD19z3YW3YK-glmL2N-dJoSm4Xq09f4ljCb-ysij_R-luCmEQCz-aLsfzr6-sCc9_8Z49fzSdXMyuRpPp5WQ-H81mINx6_tX84nI2Hl9PZrP59Pon-PJ65n2zi15eXE8m4_F4Ohpdjqajy_HszCMRhdPe5_-pNX9e_wMQzskE
 
-# Database Migration Files - Hệ thống quản lý Đại lý VTNN
+https://mermaid.live/view#pako:eNqtWdtyozgQ_RWKx61MyvY4N153X_cHtlylkpGMNQMS0cUTJ5V_3wYkDEJc7CQPsVF3S92nr8IfcSoIjZM4zbFS_zCcSVzseAR_9UpUSnFgOVXRR7Na_RnDSMTIZeGEZXrEMqIFZvllWdM3HZWwyx8hCTpidRyKcFzQ4aoSUqMwqTwKTr0zMCGSKnVZtVojKXIaVf88AS50Z2kvgAPziCmEU81OXW5WUKVxUer3CPDQKBcZ4wjrMEsqKdaUtPTPHe-CmQIxE5L14dyzTFHJcB7EdASg3GSeTYSqVLJSM8GDh-8l5uSbD3arqTBcy3PwXPAFMalecDKsMq4dSmcUoNVGoO_FqaWwAmcUGdkJYW4K0DOF_TSS-IagmYkICw4ynF2BkJMK4VDtFMCBvVOU4z3NA7TjMNuc3Zxq9KrPgWNEMeQu4V_ICb_NcHEPn1B6LgQwjGYUuLVIf8_i7OOIzwXlGhVUH8VtUe7tqI6sLBnPvrLl4tyE_CkFv-KMPnRulTBVZyLS5zLgzJZ8wrkJ0AuobFCpqURaaNyJFAIhHNG3kkFSkl4WOKcZVaVOzgoWjvN62wX21a1lb86gQ3fZaVjrhXBRWTFGPWE9YbpnWWMuJKs24PL6Y5BtXiSEylI__EIcjYd7FCekqSx6D8HgFzxnPFB_KOMnAWmHJH01TFJyUx1qcGCaFsurkJUZL09VKerRXbS8Gsw165aVkQoycN-Y64f1uUvpSvmZZ6DeACeyDlgao8A-EqO-ihaUQGg4n4-EX9d9JWakN3W045AUJ1an7Fs_ugJzzjWTigcLwnkuoDGzRVXKy4pFsdPC1xxUqbbAa5j8gq_XOG5YXOZV8jzqsAcIVW-IWI7vHyzpURhFv9ZXeoOvd0QmoGtBVUgpNJ6l6ChTljkLA9Tq3I-zjtH1YSfaj1QvEKe0vLIAtVJfLkF-73co7Fmefwm6dtqBjRAXXkutV0mwbCmz91rVXCtruyB-GyUF2-d8D5usRHZ0zvqD8xW50EP7yhBoRK7w__gVwIE0bE6TM299wkjbqjo2cv4Ke2r0UlGPwTUaQdCg64OzqltSIU50YQGcA2cy0Ycn1mNm1J81x1v8pWoekMb77p28zefDaNjNxVCN1lXdYNLYbyjxvkpXRnZX8Ib6RtjhcLm5DVWTFCmqNYy1C1Sqk6YRCjShnGZQVQKE0Kua0CuiweuberXKjoDlhB6wyTUK-625HBkpKU_Pvp4wV-QLxyGfbkoy4uvLK51dvN7F0Y8f8OUv-NK-90iiI7bG2Xcw45wF5uYA91wDgDQiLTEsZN8cJHDB4BozbqVa2eblnSdrb2NJVOY4dQfZxRCrDV3_kL4Kk4L1E-DHLGyD2_WYhhWjQieG7ZHePX_UsKpL7W0EuNv1GDOu-w-BrrkEvOGNoTrubDEZUmfEe5N10hl_HVRhv8xsYycxtQi1kEUN61V4dKtvYusX2HEQcpEhfXFJc0BBLfSJN-smbqaw9nem7TlBB1yb6R7HlPwtaRLeoB2kXRBMm-_Nq0k9Fil0kG5g8RimxG8xIrxBaaoeqjpWzMThwIxeFi_QIzQUQSiLLpLjsRCWbm-juqvG-C7DSaSTC26TIdPMLjd5ZWyPVp1-dE3a1J0XkmETju_iTDISJ1oaehdDPkOfh8e4ni12sT4CoLs4ga9Wdhfv-CeIlZj_J0ThJKUw2dE9NF3X_irVclAOdeTvaqSOk_V6U28RJx_xGzz-XN1vnx5eHler7Wb1_Pz0eBefYXl7__yy3j5s1-vV-nn9tNp83sXv9anr-83z6ulh-_Ph5WHzuNmu72JKGNj7r_1drPr4_B_lfLaa
 
-## Tổng quan
+# Database Schema Documentation
 
-Thư mục này chứa các file migration SQL để khởi tạo và quản lý cơ sở dữ liệu cho hệ thống quản lý đại lý vật tư nông nghiệp. Database được thiết kế theo mô hình chuẩn hóa với đầy đủ tính năng:
+**Hệ thống quản lý bán hàng vật tư nông nghiệp (BVTV)**
 
-- ✅ Quản lý sản phẩm & danh mục
-- ✅ Quản lý kho hàng & tồn kho
-- ✅ Đơn hàng bán & công nợ khách hàng (AR)
-- ✅ Nhập hàng & hóa đơn nhà cung cấp
-- ✅ Tracking VAT chi tiết
-- ✅ Báo cáo & in ấn chứng từ
+## 📋 Tổng quan
 
-## Cấu trúc Migration Files
+Cơ sở dữ liệu gồm **20 bảng chính** được tổ chức thành 7 migration files, quản lý đầy đủ quy trình:
 
-### V1: Core Schema (Lõi hệ thống)
-**File:** `V1__core_schema.sql`
+-   Bán hàng (Sales) & Công nợ phải thu (AR)
+-   Mua hàng (Purchase) & Thanh toán nhà cung cấp (AP)
+-   Quản lý kho (Inventory) với tracking đầy đủ
+-   Báo cáo và In ấn
 
-Định nghĩa các enum types và bảng cơ bản:
-- **ENUMs**: `user_role`, `order_status`, `payment_term`, `payment_status`, `movement_type`
-- **Tables**: 
-  - `profiles` - Người dùng (khách hàng, nhà cung cấp, nhân viên)
-  - `payment_methods` - Phương thức thanh toán
-  - `shipping_methods` - Phương thức vận chuyển
-  - `warehouses` - Kho hàng
-  - `coupons` - Mã giảm giá
+---
 
-### V2: Product Catalog (Danh mục sản phẩm)
-**File:** `V2__product_catalog.sql`
+## 🗂️ Cấu trúc Files
 
-Quản lý sản phẩm với cấu trúc phân cấp:
-- **Tables**:
-  - `categories` - Danh mục sản phẩm
-  - `brands` - Thương hiệu
-  - `products` - Sản phẩm (master data)
-  - `product_units` - Đơn vị sản phẩm (SKU với giá, kích thước)
+### **V1\_\_enums_and_profiles.sql** - Enums & Người dùng
 
-**Đặc điểm:**
-- Hỗ trợ slug SEO-friendly
-- Tracking VAT rate theo sản phẩm
-- Multi-unit pricing (1 sản phẩm nhiều quy cách)
+**7 ENUMs:**
 
-### V3: Sales Orders & AR (Đơn hàng & Công nợ)
-**File:** `V3__sales_orders_and_AR.sql`
+-   `profile_role`: customer, agent, supplier, admin, staff
+-   `order_status`: pending, confirmed, shipped, completed, cancelled
+-   `payment_term`: prepaid, cod, credit
+-   `payment_status`: pending, success, failed, void
+-   `inventory_movement_type`: purchase, sale, return_in/out, adjustment_pos/neg, transfer_in/out, conversion_in/out
+-   `bill_status`: open, partially_paid, paid, void (chưa dùng - thanh toán NCC đơn giản)
 
-Quản lý bán hàng và công nợ khách hàng:
-- **Tables**:
-  - `orders` - Đơn hàng bán (có tracking VAT: `total_amount`, `total_vat`)
-  - `order_items` - Chi tiết đơn hàng (có `vat_rate`, `vat_amount` per line)
-  - `customer_payments` - Phiếu thu tiền
-  - `customer_payment_allocations` - Phân bổ thanh toán
-  - `customer_adjustments` - Điều chỉnh công nợ
+**1 Bảng:**
 
-**Payment Terms hỗ trợ:**
-- `prepaid` - Trả trước (COD online)
-- `cod` - Thu tiền khi giao hàng
-- `net_7/15/30` - Công nợ 7/15/30 ngày
+-   `profiles`: Lưu tất cả người dùng (khách hàng, NCC, admin, nhân viên)
 
-### V4: Purchases (Nhập hàng từ NCC)
-**File:** `V4__purchases.sql`
+---
 
-Quản lý nhập hàng:
-- **Tables**:
-  - `goods_receipts` - Phiếu nhập kho
-  - `goods_receipt_items` - Chi tiết phiếu nhập
-  - `supplier_bills` - Hóa đơn nhà cung cấp (có tracking VAT)
-  - `supplier_bill_items` - Chi tiết hóa đơn (có `tax_rate` per line)
+### **V2\_\_catalog_and_reference.sql** - Danh mục & Tham chiếu
 
-**Lưu ý:** Không có AP (Accounts Payable) vì thanh toán NCC ngay khi nhận hàng.
+**7 Bảng:**
 
-### V5: Inventory Movements (Biến động kho)
-**File:** `V5__inventory_movements.sql`
+-   `categories`: Danh mục sản phẩm
+-   `brands`: Thương hiệu
+-   `products`: Sản phẩm (có VAT rate)
+-   `product_units`: Đơn vị bán (bao 50kg, chai 1L...) - có giá, SKU, tồn kho
+-   `payment_methods`: Phương thức thanh toán
+-   `shipping_methods`: Phương thức vận chuyển
+-   `coupons`: Mã giảm giá
 
-Tracking mọi giao dịch xuất/nhập kho:
-- **Table**: `inventory_movements`
-- **Movement Types**:
-  - **TĂNG**: `purchase`, `return_in`, `adjustment_pos`, `transfer_in`, `conversion_in`
-  - **GIẢM**: `sale`, `return_out`, `adjustment_neg`, `transfer_out`, `conversion_out`
+**Lưu ý:**
 
-**Triggers tự động:**
-- Tạo movement khi nhập hàng từ `goods_receipt_items`
-- Tạo movement khi bán hàng từ `order_items`
-- Cập nhật `product_units.stock` realtime
+-   `products.vat_rate`: % VAT của sản phẩm (0, 5, 8, 10)
+-   `product_units.price`: Giá đã bao gồm VAT
+-   `product_units.short_name`: Tên gọi tắt (VD: "Con Rồng to", "Thuốc gầy nhỏ")
 
-### V7: Views & Reports (Báo cáo & In ấn)
-**File:** `V7__storeSettings_views_and_reports.sql`
+---
 
-Báo cáo và views để in chứng từ:
+### **V3\_\_sales_orders_and_AR.sql** - Đơn hàng & Công nợ phải thu
 
-**Báo cáo:**
-- `stock_on_hand` - Tồn kho hiện tại theo sản phẩm & kho
-- `ar_balance_per_customer` - Công nợ khách hàng
+**5 Bảng:**
 
-**Views in ấn:**
-- `invoice_print_header` / `invoice_print_lines` - Hóa đơn bán hàng (có `total_vat`)
-- `goods_issue_print_header` / `goods_issue_print_lines` - Phiếu xuất kho
-- `gr_print_header` / `gr_print_lines` - Phiếu nhập kho
+-   `orders`: Đơn hàng bán (có total_vat riêng)
+-   `order_items`: Chi tiết đơn hàng (snapshot vat_rate và vat_amount)
+-   `customer_payments`: Phiếu thu tiền từ khách
+-   `customer_payment_allocations`: Phân bổ payment cho order (1 payment → nhiều orders)
+-   `customer_adjustments`: Điều chỉnh công nợ (trả hàng, giảm giá thêm...)
 
-**Settings:**
-- `store_settings` - Thông tin cửa hàng (tên, MST, địa chỉ...)
+**VAT Tracking:**
 
-### V9: Seed Data (Dữ liệu mẫu)
-**File:** `V9__seed_sample_catalog_and_goods_receipt.sql`
+-   `order_items.vat_rate`: Snapshot từ `products.vat_rate` tại thời điểm bán
+-   `order_items.vat_amount`: Tiền VAT tách ra từ giá đã bao gồm VAT
+-   `orders.total_vat`: Tổng VAT của đơn hàng (sum từ order_items)
 
-Khởi tạo dữ liệu demo:
-- 2 categories (Phân bón, Thuốc BVTV)
-- 3 brands (Phú Mỹ, Bayer, Syngenta)
-- 4 products với 4 SKUs
-- 1 supplier + 1 goods receipt (nhập 4 sản phẩm)
-- 1 supplier bill (tổng tiền: 189,255,000đ bao gồm VAT 10%)
+---
 
-## Quan hệ chính giữa các bảng
+### **V4\_\_AP_goods_receipts_and_bills.sql** - Nhập hàng & Hóa đơn NCC
 
+**5 Bảng:**
+
+-   `warehouses`: Kho hàng
+-   `goods_receipts`: Phiếu nhập hàng từ NCC
+-   `goods_receipt_items`: Chi tiết phiếu nhập
+-   `supplier_bills`: Hóa đơn NCC (thanh toán ngay và đủ)
+-   `supplier_bill_items`: Chi tiết hóa đơn (hàng hóa + chi phí khác)
+
+**Model đơn giản:**
+
+-   Không cần Purchase Order
+-   Thanh toán NCC ngay khi nhận hóa đơn (`paid_at` not null)
+-   Không quản lý công nợ NCC phức tạp
+
+---
+
+### **V5\_\_inventory_movements_and_triggers.sql** - Xuất nhập tồn & Triggers
+
+**3 Bảng:**
+
+-   `inventory_movements`: Sổ xuất nhập tồn (mọi giao dịch)
+-   `stock_adjustments`: Phiếu điều chỉnh tồn kho
+-   `stock_adjustment_items`: Chi tiết điều chỉnh
+
+**5 Triggers tự động:**
+
+1. `trg_movements_after_ins`: Cập nhật stock khi INSERT movement
+2. `trg_movements_after_upd`: Hoàn nguyên OLD + áp dụng NEW
+3. `trg_movements_after_del`: Hoàn nguyên stock khi DELETE movement
+4. `trg_gr_items_after_ins`: Tạo movement type='purchase' từ goods_receipt_items
+5. `trg_sai_after_ins`: Tạo movement type='adjustment_pos/neg' từ stock_adjustment_items
+
+**Logic cập nhật stock:**
+
+-   **TĂNG tồn:** purchase, return_in, adjustment_pos, conversion_in
+-   **GIẢM tồn:** sale, return_out, adjustment_neg, conversion_out
+
+---
+
+### **V7\_\_storeSettings_views_and_reports.sql** - Cài đặt & Báo cáo
+
+**1 Bảng:**
+
+-   `store_settings`: Thông tin cửa hàng (tên, địa chỉ, MST, kho mặc định...)
+
+**8 Views:**
+
+1. `stock_on_hand`: Tồn kho hiện tại (theo product_unit + warehouse)
+2. `ar_balance_per_customer`: Công nợ phải thu từng khách hàng
+3. `invoice_print_header`: Header hóa đơn bán (để in)
+4. `invoice_print_lines`: Chi tiết hóa đơn bán
+5. `goods_issue_print_header`: Header phiếu xuất kho
+6. `goods_issue_print_lines`: Chi tiết phiếu xuất kho
+7. `gr_print_header`: Header phiếu nhập kho
+8. `gr_print_lines`: Chi tiết phiếu nhập kho
+
+---
+
+## 🔗 Mối quan hệ chính

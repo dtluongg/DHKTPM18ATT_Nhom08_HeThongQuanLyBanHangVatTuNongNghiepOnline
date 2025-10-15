@@ -98,8 +98,8 @@ select (select id from products where slug='ridomil-gold-68wg'),'pack','100g','R
 -- Tạo 1 nhà cung cấp: Công ty An Phú
 -- Sau đó tạo 1 phiếu nhập kho vào kho Main
 with s as (
-  insert into profiles(email, name, phone, address, role)
-  values ('ncc.anphu@example.com','Công ty TNHH Vật Tư NN An Phú','0909000111','TP. Hồ Chí Minh','supplier')
+  insert into profiles(email, name, sort_name, phone, address, role)
+  values ('ncc.anphu@example.com','Công ty TNHH Vật Tư NN An Phú','Chú An','0909000111','TP. Hồ Chí Minh','supplier')
   returning id
 ),
 wh as (select id from warehouses where name='Main' limit 1)
@@ -136,8 +136,8 @@ insert into goods_receipt_items(receipt_id, product_unit_id, quantity) values
 --   Total = 189,255,000đ
 with s as (select id from profiles where email='ncc.anphu@example.com' limit 1),
      pm as (select id from payment_methods where name='Chuyển khoản' limit 1)
-insert into supplier_bills(supplier_id, bill_no, bill_date, subtotal, discount_total, tax_total, total_amount, payment_method_id)
-select s.id, 'AP-2024-001', current_date, 172050000, 0, 17205000, 189255000, pm.id
+insert into supplier_bills(supplier_id, bill_no, bill_date, subtotal, discount_total, tax_total, total_amount, payment_method_id, img_url)
+select s.id, 'AP-2024-001', current_date, 172050000, 0, 17205000, 189255000, pm.id, 'https://example.com/invoices/AP-2024-001.jpg'
 from s, pm;
 
 -- ================================================================================

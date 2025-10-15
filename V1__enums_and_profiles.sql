@@ -1,4 +1,3 @@
-
 -- =============================================================================
 -- V1: Enum Types & Profiles (Kiểu dữ liệu enum & Bảng hồ sơ)
 -- =============================================================================
@@ -17,10 +16,10 @@ create extension if not exists pgcrypto;
 -- agent: Đại lý bán hàng
 -- supplier: Nhà cung cấp
 -- admin: Quản trị viên
--- employee: Nhân viên
+-- staff: Nhân viên
 do $$ begin
   if not exists (select 1 from pg_type where typname = 'profile_role') then
-    create type profile_role as enum ('customer','agent','supplier','admin', 'employee');
+    create type profile_role as enum ('customer','agent','supplier','admin', 'staff');
   end if;
 end $$;
 
@@ -107,6 +106,7 @@ create table if not exists profiles (
   email varchar unique,                           -- Email đăng nhập (unique)
   password_hash text,                             -- Mật khẩu đã mã hóa (bcrypt)
   name varchar,                                   -- Tên người dùng/công ty
+  sort_name varchar,                              -- Tên viết tắt/tên gọi khác (VD: "Chú Tư", "Anh Năm")
   phone varchar,                                  -- Số điện thoại
   address text,                                   -- Địa chỉ
   role profile_role not null default 'customer', -- Vai trò (customer/agent/supplier/admin)
@@ -118,3 +118,5 @@ create table if not exists profiles (
 
 -- INDEX: Tăng tốc tìm kiếm theo vai trò
 create index if not exists idx_profiles_role on profiles(role);
+-- INDEX: Tăng tốc tìm kiếm theo sort_name
+create index if not exists idx_profiles_sort_name on profiles(sort_name);

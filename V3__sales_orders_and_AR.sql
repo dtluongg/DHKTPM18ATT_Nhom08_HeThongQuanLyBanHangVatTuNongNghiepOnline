@@ -25,17 +25,20 @@ create table if not exists orders (
   payment_method_id bigint references payment_methods(id) on delete set null,   -- Phương thức thanh toán
   coupon_id bigint references coupons(id) on delete set null,                -- Mã giảm giá đã sử dụng
   payment_term payment_term not null default 'prepaid',                      -- Điều kiện thanh toán: prepaid (trả trước), cod (thu tiền khi giao), net_7/15/30 (công nợ)
+  is_online boolean not null default true,                                   -- Kênh bán hàng: true = Online, false = POS
   einvoice_required boolean not null default false,                          -- Khách yêu cầu xuất hóa đơn điện tử không?
   created_at timestamptz not null default now()                              -- Ngày tạo đơn
 );
 
 comment on column orders.total_vat is 'Total VAT amount for the order (sum of vat_amount from order_items).';
+comment on column orders.is_online is 'Sales channel: true = Online order, false = POS order';
 comment on column orders.einvoice_required is 'Customer requested e-invoice for this order';
 
 -- INDEX cho orders: tăng tốc truy vấn theo buyer, trạng thái, và ngày tạo
 create index if not exists idx_orders_buyer on orders(buyer_id);
 create index if not exists idx_orders_status on orders(status);
 create index if not exists idx_orders_created_at on orders(created_at);
+create index if not exists idx_orders_is_online on orders(is_online);
 
 -- ================================================================================
 -- 2. TABLE: order_items (Chi tiết đơn hàng)

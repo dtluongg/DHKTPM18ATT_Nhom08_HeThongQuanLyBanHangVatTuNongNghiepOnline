@@ -73,8 +73,11 @@ create table if not exists supplier_bills (
   total_amount numeric not null,                                             -- Tổng tiền phải trả (sau giảm giá + thuế)
   payment_method_id bigint references payment_methods(id) on delete set null, -- Phương thức thanh toán
   paid_at timestamptz not null default now(),                                -- Thời điểm thanh toán
+  img_url text,                                                              -- Link ảnh chụp hóa đơn từ nhà cung cấp
   created_at timestamptz not null default now()                              -- Ngày tạo bill trong hệ thống
 );
+
+comment on column supplier_bills.img_url is 'Image URL/path of supplier invoice photo for reference';
 
 -- INDEX cho supplier_bills: tăng tốc truy vấn theo supplier và ngày
 create index if not exists idx_supplier_bills_supplier on supplier_bills(supplier_id);

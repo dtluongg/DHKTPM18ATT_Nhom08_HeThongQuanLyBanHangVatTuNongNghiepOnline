@@ -1,1 +1,15 @@
-Những điều Luong dang can lam
+Ý tưởng web app quan ly xe dua don hoc sinh
+
+
+Mỗi tài xế quản lý 1 xe, mỗi xe có nhiều học sinh.
+Số học sinh chia ra làm nhiều chuyến, 
+học sinh sẽ lưu thông tin (tên, điểm đón, chuyến, số tiền cần đóng mỗi tháng, sđt phụ huynh, tên phụ huynh,...)
+Tài xế sẽ cần quản lý học sinh đóng tiền hàng tháng, hs nào đóng tiền rồi thì sẽ tick vào đã đóng. 
+
+
+các chức năng yêu cầu:
+- tài xế quản lý học sinh đóng tiền hàng tháng, xem danh sách chưa đóng, click vào tháng hiển thị số học sinh chưa đóng và số tiền chưa đóng cộng dồn theo tháng. 
+- Các tài xế sẽ có thể chạy thêm các dịch vụ vào những ngày học sinh nghỉ, chủ quản lý nhà xe sẽ chọn tên tài xế, chọn xe, chọn ngày, chọn tên dịch vụ chạy thêm.
+- quản lý lương của tài xế, lương áp cứng hàng tháng và lương cộng thêm qua mỗi ngày chạy thêm. 
+- chủ quản lý nhà xe sẽ tổng hợp tiền mà các tài xế đã thu, lưu lại ngày giờ tài xe giao nộp tiền cho chủ quản lý, số tiền, danh sách học sinh chưa đóng. 
+

@@ -1,0 +1,104 @@
+@startuml
+title UC002 - Quản lý sản phẩm
+
+actor "Admin" as Admin
+participant ProductsPage
+participant ProductController
+participant productService
+database productRepository as prodRepo
+participant MediaController
+participant mediaService
+database ObjectStorage as mediaRepo
+
+== Xem danh sách ==
+Admin -> ProductsPage : Mở trang "Sản phẩm" (1)
+ProductsPage -> ProductController : GET /api/products?search=... (2)
+ProductController -> productService : searchProducts(filters)
+productService -> prodRepo : SELECT ... FROM products ... (filter, paging)
+prodRepo --> productService : rows
+productService --> ProductController : ProductListDTO
+ProductController --> ProductsPage : 200 OK + data (2.1)
+ProductsPage --> Admin : Hiển thị danh sách (3)
+
+== Tạo mới / Chỉnh sửa ==
+Admin -> ProductsPage : Chọn "Tạo mới" hoặc chọn 1 sản phẩm để "Chỉnh sửa" (2)
+ProductsPage -> ProductController : (NEW) GET /api/products/template\n(EDIT) GET /api/products/{id}
+ProductController -> productService : (NEW) getTemplate() / (EDIT) getById(id)
+productService -> prodRepo : (EDIT) SELECT * FROM products... WHERE id=?
+prodRepo --> productService : product(+units,+images)
+productService --> ProductController : ProductDTO
+ProductController --> ProductsPage : 200 OK + form data
+ProductsPage --> Admin : Hiển thị form
+
+== Nhập thông tin chung ==
+Admin -> ProductsPage : Nhập/chỉnh Tên, Danh mục, Mô tả, Thuộc tính, Trạng thái (4)
+
+== Thêm đơn vị tính / SKU ==
+Admin -> ProductsPage : Mở tab "Đơn vị tính/SKU" -> "Thêm đơn vị" (5)
+Admin -> ProductsPage : Nhập Đơn vị, SKU, Quy đổi, Giá bán, VAT %, Mã vạch/QR (6)
+ProductsPage -> ProductController : POST /api/products/validate-unit  \n{sku, price, vat, ...}
+ProductController -> productService : validateUnit(data)
+productService -> prodRepo : SELECT id FROM product_units WHERE sku = ?
+prodRepo --> productService : none / found
+alt SKU duy nhất
+  productService --> ProductController : OK
+  ProductController --> ProductsPage : 200 OK (7)
+else SKU đã tồn tại
+  productService --> ProductController : error "SKU exists"
+  ProductController --> ProductsPage : 409 CONFLICT
+  ProductsPage --> Admin : Thông báo 'SKU đã tồn tại' (AF3)
+end
+
+== Ảnh sản phẩm ==
+Admin -> ProductsPage : Mở tab "Hình ảnh" -> chọn ảnh đại diện/tải ảnh (8)
+ProductsPage -> MediaController : POST /api/media/upload (file)
+MediaController -> mediaService : validate(file: type,size)
+alt Hợp lệ
+  mediaService -> mediaRepo : putObject(file)
+  mediaRepo --> mediaService : url
+  mediaService --> MediaController : {url}
+  MediaController --> ProductsPage : 201 CREATED + {url} (9)
+else Ảnh không hợp lệ
+  mediaService --> MediaController : error "invalid file"
+  MediaController --> ProductsPage : 400 BAD REQUEST
+  ProductsPage --> Admin : Báo lỗi file (AF2)
+end
+
+== Lưu sản phẩm ==
+Admin -> ProductsPage : Nhấn "Lưu" (10)
+ProductsPage -> ProductController : (NEW) POST /api/products \n(EDIT) PUT /api/products/{id}
+ProductController -> productService : saveProduct(ProductDTO)
+productService -> productService : validateAll(fields, units, images)
+alt Dữ liệu hợp lệ
+  productService -> prodRepo : INSERT/UPDATE products
+  productService -> prodRepo : INSERT/UPSERT product_units
+  productService -> prodRepo : INSERT/UPSERT product_images
+  productService --> ProductController : ProductDTO(saved)
+  ProductController --> ProductsPage : 200 OK (11)
+  ProductsPage --> Admin : Cập nhật danh sách / thông báo thành công (12)
+else Thiếu/bất hợp lệ
+  productService --> ProductController : error details
+  ProductController --> ProductsPage : 422 UNPROCESSABLE ENTITY
+  ProductsPage --> Admin : Đánh dấu trường lỗi & giữ dữ liệu (AF1)
+end
+
+== Luồng phụ: Xoá / Ngưng bán ==
+Admin -> ProductsPage : Chọn sản phẩm -> "Xoá"
+ProductsPage -> ProductController : DELETE /api/products/{id}
+ProductController -> productService : deleteOrDeactivate(id)
+productService -> prodRepo : CHECK hasOrdersOrStocks(id)
+prodRepo --> productService : true/false
+alt Đã phát sinh đơn hàng/tồn kho
+  productService -> prodRepo : UPDATE products SET status='INACTIVE' WHERE id=?
+  productService --> ProductController : result "deactivated"
+  ProductController --> ProductsPage : 200 OK (Ngưng bán) (AF4)
+else Chưa phát sinh
+  productService -> prodRepo : DELETE FROM product_images WHERE product_id=?
+  productService -> prodRepo : DELETE FROM product_units WHERE product_id=?
+  productService -> prodRepo : DELETE FROM products WHERE id=?
+  productService --> ProductController : result "deleted"
+  ProductController --> ProductsPage : 200 OK
+end
+ProductsPage --> Admin : Hiển thị kết quả
+
+@enduml

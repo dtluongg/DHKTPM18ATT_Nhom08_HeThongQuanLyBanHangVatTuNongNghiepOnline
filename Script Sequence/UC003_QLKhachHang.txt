@@ -1,0 +1,127 @@
+@startuml
+title UC003 - Quản lý khách hàng
+
+actor "Admin/Staff" as Actor
+participant CustomersPage
+participant CustomerController
+participant customerService
+database customerRepository as custRepo
+participant AddressController
+participant addressService
+database addressRepository as addrRepo
+
+== Tìm kiếm danh sách ==
+Actor -> CustomersPage : Mở trang "Khách hàng" (1)
+CustomersPage -> CustomerController : GET /api/customers?keyword=&page=&size= (2)
+CustomerController -> customerService : search(keyword, paging)
+customerService -> custRepo : SELECT ... FROM customers WHERE ... LIMIT/OFFSET
+custRepo --> customerService : rows
+customerService --> CustomerController : CustomerListDTO
+CustomerController --> CustomersPage : 200 OK + data (2.1)
+CustomersPage --> Actor : Hiển thị danh sách & bộ lọc
+
+== Xem chi tiết ==
+Actor -> CustomersPage : Chọn 1 khách để xem chi tiết (3)
+CustomersPage -> CustomerController : GET /api/customers/{id}
+CustomerController -> customerService : getById(id)
+customerService -> custRepo : SELECT * FROM customers WHERE id=?
+custRepo --> customerService : customer
+customerService -> addrRepo : SELECT * FROM addresses WHERE customer_id=? ORDER BY is_default DESC
+addrRepo --> customerService : address list
+customerService --> CustomerController : CustomerDTO(+addresses)
+CustomerController --> CustomersPage : 200 OK + CustomerDTO
+CustomersPage --> Actor : Hiển thị hồ sơ + địa chỉ
+
+== Tạo mới ==
+Actor -> CustomersPage : Nhấn "Tạo mới" (4)
+Actor -> CustomersPage : Nhập Họ tên, Email, Điện thoại, Nhóm/Hạng, Ghi chú (5)
+CustomersPage -> CustomerController : POST /api/customers {profile} (6)
+CustomerController -> customerService : create(profile)
+
+customerService -> customerService : validate(email unique, phone unique)
+alt Hợp lệ
+  customerService -> custRepo : INSERT INTO customers(...)
+  custRepo --> customerService : new id
+  customerService --> CustomerController : CustomerDTO(created)
+  CustomerController --> CustomersPage : 201 CREATED + CustomerDTO
+  CustomersPage --> Actor : Thông báo thành công (6.1)
+else Trùng email/điện thoại
+  customerService --> CustomerController : error DUPLICATE(email/phone)
+  CustomerController --> CustomersPage : 409 CONFLICT
+  CustomersPage --> Actor : Đánh dấu trường lỗi & giữ dữ liệu (AF1)
+end
+
+== Cập nhật hồ sơ ==
+Actor -> CustomersPage : Sửa thông tin khách (7)
+CustomersPage -> CustomerController : PUT /api/customers/{id} {profile}
+CustomerController -> customerService : update(id, profile)
+customerService -> customerService : validate(email/phone unique except self)
+alt Hợp lệ
+  customerService -> custRepo : UPDATE customers SET ...
+  custRepo --> customerService : OK
+  customerService --> CustomerController : CustomerDTO(updated)
+  CustomerController --> CustomersPage : 200 OK
+  CustomersPage --> Actor : Lưu thành công (7.1)
+else Trùng email/điện thoại
+  customerService --> CustomerController : error DUPLICATE
+  CustomerController --> CustomersPage : 409 CONFLICT
+  CustomersPage --> Actor : Đánh dấu trường lỗi (AF1)
+end
+
+== Quản lý địa chỉ ==
+Actor -> CustomersPage : Thêm/Sửa địa chỉ (8)
+CustomersPage -> AddressController : POST /api/customers/{id}/addresses {addr} \nOR PUT /api/customers/{id}/addresses/{addrId}
+AddressController -> addressService : saveOrUpdate(customerId, addr)
+addressService -> addressService : validate(receiver phone, province/district/ward)
+alt Hợp lệ
+  addressService -> addrRepo : INSERT/UPDATE addresses
+  addrRepo --> addressService : OK
+  addressService --> AddressController : AddressDTO
+  AddressController --> CustomersPage : 200 OK/201 CREATED
+  CustomersPage --> Actor : Lưu địa chỉ thành công (8.1)
+else Dữ liệu thiếu/bất hợp lệ
+  addressService --> AddressController : error details
+  AddressController --> CustomersPage : 422 UNPROCESSABLE ENTITY
+  CustomersPage --> Actor : Đánh dấu trường lỗi & giữ dữ liệu (AF2)
+end
+
+== Đặt địa chỉ mặc định ==
+Actor -> CustomersPage : Đặt địa chỉ A là mặc định (9)
+CustomersPage -> AddressController : PATCH /api/customers/{id}/addresses/{addrId}/default
+AddressController -> addressService : setDefault(customerId, addrId)
+addressService -> addrRepo : UPDATE addresses SET is_default=false WHERE customer_id=?
+addrRepo --> addressService : OK
+addressService -> addrRepo : UPDATE addresses SET is_default=true WHERE id=? AND customer_id=?
+addrRepo --> addressService : OK
+addressService --> AddressController : OK
+AddressController --> CustomersPage : 200 OK
+CustomersPage --> Actor : Cập nhật default thành công (9.1)
+
+== Xoá / Ngưng hoạt động ==
+Actor -> CustomersPage : Chọn hồ sơ -> "Xoá" (10)
+CustomersPage -> CustomerController : DELETE /api/customers/{id}
+CustomerController -> customerService : deleteOrDeactivate(id)
+customerService -> custRepo : CHECK hasOrders(id)
+custRepo --> customerService : true/false
+alt Đã phát sinh đơn
+  customerService -> custRepo : UPDATE customers SET is_active=false WHERE id=?
+  custRepo --> customerService : OK
+  customerService --> CustomerController : result "inactive"
+  CustomerController --> CustomersPage : 200 OK (inactive) (AF3)
+else Chưa phát sinh đơn
+  customerService -> addrRepo : DELETE FROM addresses WHERE customer_id=?
+  customerService -> custRepo : DELETE FROM customers WHERE id=?
+  custRepo --> customerService : OK
+  customerService --> CustomerController : result "deleted"
+  CustomerController --> CustomersPage : 200 OK
+end
+CustomersPage --> Actor : Hiển thị kết quả
+
+== Ghi chú ==
+note right of CustomerController
+- AF1: Trùng email/điện thoại -> 409, highlight trường.
+- AF2: Địa chỉ thiếu/bất hợp lệ -> 422, giữ dữ liệu để sửa.
+- AF3: Hồ sơ đã có đơn -> không xoá cứng, chuyển inactive.
+end note
+
+@enduml

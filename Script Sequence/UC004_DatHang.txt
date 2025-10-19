@@ -1,0 +1,106 @@
+@startuml
+title UC004 - Đặt hàng
+
+actor "Khách hàng" as User
+participant CartPage
+participant CartController
+participant CouponController
+participant CheckoutController
+participant PricingService
+participant InventoryService
+participant ShippingService
+participant PaymentController
+participant PaymentGateway
+participant OrderService
+database OrderRepository as OrderRepo
+participant NotificationService
+
+'== 1-2: Thêm sản phẩm & kiểm tra tồn ==
+User -> CartPage : 1) Thêm sản phẩm (SKU + số lượng) vào giỏ
+CartPage -> CartController : POST /api/cart/items {sku, qty}
+CartController -> InventoryService : checkStock(sku, qty)
+alt 2) Còn tồn khả dụng (sơ bộ)
+  InventoryService --> CartController : OK
+  CartController --> CartPage : 2) Cập nhật giỏ
+else 2.1) Hết hàng
+  InventoryService --> CartController : NOT_ENOUGH
+  CartController --> CartPage : 2.1) Đề xuất giảm số lượng/xoá dòng
+  CartPage --> User : Hiển thị gợi ý điều chỉnh
+end
+
+'== 3: Mở giỏ, cập nhật số lượng/xoá ==
+User -> CartPage : 3) Mở giỏ / cập nhật số lượng / xoá sản phẩm
+CartPage -> CartController : PATCH /api/cart/items {updates}
+CartController --> CartPage : OK (giỏ mới)
+
+'== 4-5: Nhập coupon & tính lại tổng ==
+User -> CartPage : 4) Nhập mã giảm giá (nếu có)
+CartPage -> CouponController : POST /api/coupons/apply {code}
+CouponController -> PricingService : validateAndApply(code, cart)
+alt 5) Coupon hợp lệ
+  PricingService --> CouponController : pricing(recalc)
+  CouponController --> CartPage : 5) Tổng mới (đã áp mã)
+else 4.1) Coupon hết hạn/không hợp lệ
+  PricingService --> CouponController : ERROR
+  CouponController --> CartPage : 4.1) Thông báo lý do; cho tiếp tục không áp mã
+end
+
+'== 6: Chọn/Thêm địa chỉ giao hàng ==
+User -> CartPage : 6) Chọn/Thêm địa chỉ giao hàng
+CartPage -> CheckoutController : POST /api/checkout/address {address}
+CheckoutController -> ShippingService : quote(address, cart)
+ShippingService --> CheckoutController : shipFee
+CheckoutController -> PricingService : recalc(cart, coupon, shipFee)
+PricingService --> CheckoutController : pricing(final-ish)
+CheckoutController --> CartPage : Cập nhật phí ship & tạm tính
+
+'== 6.x: Alternative - Thanh toán QR (ngay tại bước 6) ==
+User -> CartPage : 6.1) Chọn phương thức thanh toán ngay qua QR
+CartPage -> PaymentController : POST /api/payments/intents {amount, orderPreview}
+PaymentController -> PaymentGateway : createQR(amount, expires=5m)
+PaymentGateway --> PaymentController : qrCode, intentId, expiresAt
+PaymentController --> CartPage : 6.2) Hiển thị QR code (hiện trong 5 phút)
+... 6.3) Chờ cập nhật thông tin thanh toán ...
+User -> PaymentGateway : 6.4) Quét QR và thanh toán
+alt 6.5) Thanh toán thành công (trong 5 phút)
+  PaymentGateway -> PaymentController : webhook(PAID, intentId)
+  PaymentController -> CheckoutController : markIntentPaid(intentId)
+  CheckoutController --> CartPage : Thanh toán OK, tiếp tục sang bước 7
+else 6.6) Hết 5 phút chưa thanh toán
+  PaymentGateway -> PaymentController : webhook(EXPIRED, intentId)
+  PaymentController --> CartPage : 6.6) QR hết hạn → quay lại bước 6 (chọn lại phương thức)
+end
+
+'== 7-8-9: Chọn phương thức thanh toán, hiển thị tổng, xem lại ==
+User -> CartPage : 7) Chọn phương thức thanh toán
+CartPage -> CheckoutController : POST /api/checkout/payment-method {method}
+CheckoutController -> PricingService : summarize(cart, coupon, shipFee, method)
+PricingService --> CheckoutController : 8) Tổng cuối (hàng + VAT + ship – giảm)
+CheckoutController --> CartPage : 8) Hiển thị chi tiết tổng tiền
+User -> CartPage : 9) Xem lại tổng tiền
+
+'== 10-12: Đặt hàng - tạo đơn & gửi xác nhận ==
+User -> CartPage : 10) Nhấn "Đặt hàng"
+CartPage -> CheckoutController : POST /api/checkout/place \nHeaders: Idempotency-Key
+CheckoutController -> OrderService : placeOrder(cartSnapshot, pricing, address, method)
+OrderService -> InventoryService : recheckAndReserve(cartSnapshot)  ' revalidate ngay trước khi tạo
+OrderService -> PricingService : revalidateTotals(cartSnapshot, coupon, shipFee, method)
+alt 11) Hợp lệ
+  OrderService -> OrderRepo : INSERT orders, order_items
+  OrderService --> CheckoutController : order(id, status=pending/pending_payment)
+  CheckoutController -> NotificationService : sendOrderConfirmation(order)
+  NotificationService --> CheckoutController : sent
+  CheckoutController --> CartPage : 12) Trả kết quả đặt hàng thành công + hiển thị xác nhận
+else Lệch số lượng/giá/coupon/ship (need review)
+  OrderService --> CheckoutController : ERROR REVIEW_REQUIRED
+  CheckoutController --> CartPage : Hiển thị chênh lệch; yêu cầu xem lại trước khi đặt
+end
+
+'== Ghi chú ==
+note right of CheckoutController
+- Server là nguồn sự thật (SoT) khi tính tổng tiền.
+- Sử dụng Idempotency-Key để tránh tạo đơn trùng khi nhấn nhiều lần.
+- Nếu payment=QR ở 6.x: đơn chỉ chuyển confirmed khi nhận trạng thái PAID.
+end note
+
+@enduml

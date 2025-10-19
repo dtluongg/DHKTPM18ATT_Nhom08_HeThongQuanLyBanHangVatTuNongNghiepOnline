@@ -1,0 +1,22 @@
+flowchart TD
+A[Mo trang Quan ly khach hang] --> B[Tim kiem theo tieu chi]
+B --> C[Hien thi danh sach va bo loc]
+C --> D{Tao moi hay chinh sua}
+D --> E[Mo form tao moi]
+D --> F[Mo form chi tiet]
+E --> G[Nhap thong tin khach hang]
+F --> G
+G --> H[Validate truong bat buoc va trung lap]
+H --> I{Hop le}
+I -- Yes --> J[Nhan Luu]
+I -- No  --> E1[Loi trung lap hoac thieu truong] --> G
+J --> K[Validate toan cuc va ghi du lieu]
+K --> L{OK}
+L -- Yes --> M[[Thanh cong cap nhat danh sach]]
+L -- No  --> E2[Loi tong the] --> G
+
+
+flowchart TD
+X0[Chon Xoa khach hang] --> X1{Da phat sinh don hoac cong no}
+X1 -- Co --> X2[Khong xoa cung Chuyen sang trang thai Ngung hoat dong] --> XR[[Quay ve danh sach]]
+X1 -- Khong --> X3[Xoa cung sau khi xac nhan] --> XR

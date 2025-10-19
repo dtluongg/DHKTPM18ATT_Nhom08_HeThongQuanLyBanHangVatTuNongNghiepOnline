@@ -1,0 +1,22 @@
+main:
+
+flowchart TD
+A[Mo trang San pham] --> B{Tao moi hay chinh sua}
+B --> C[Nhap thong tin san pham]
+C --> D[Mo tab Don vi tinh]
+D --> E[Nhap don vi va SKU]
+E --> F{Hop le}
+F -- Yes --> G[Chon hoac tai hinh anh]
+F -- No  --> E1[Loi don vi] --> E
+G --> H{Anh hop le}
+H -- Yes --> I[Nhan Luu]
+H -- No  --> E2[Loi anh] --> G
+I --> J{Validate toan cuc ok}
+J -- Yes --> K[[Thanh cong cap nhat danh sach]]
+J -- No  --> E3[Loi tong the] --> C
+
+alternative:
+flowchart TD
+X0[Chon Xoa] --> X1{Da co don hang hoac ton kho}
+X1 -- Co --> X2[Khong xoa cung. Dat trang thai Ngung ban] --> XR[[Quay ve danh sach]]
+X1 -- Khong --> X3[Xoa cung thanh cong] --> XR

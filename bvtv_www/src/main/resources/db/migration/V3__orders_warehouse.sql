@@ -27,7 +27,7 @@ create table if not exists orders (
   payment_term payment_term not null default 'prepaid',                      -- Điều kiện thanh toán: prepaid (trả trước), cod (thu tiền khi giao), credit (công nợ)
   is_online boolean not null default true,                                   -- Kênh bán hàng: true = Online, false = POS
   einvoice_required boolean not null default false,                          -- Khách yêu cầu xuất hóa đơn điện tử không?
-  created_at timestamptz not null default now()                              -- Ngày tạo đơn
+  created_at timestamp not null default now()                              -- Ngày tạo đơn
 );
 
 -- TRIGGER FUNCTION: Tự động tạo order_no theo format ORD-YYYYMMDD-XXXX

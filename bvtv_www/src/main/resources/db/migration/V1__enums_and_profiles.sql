@@ -49,18 +49,6 @@ do $$ begin
   end if;
 end $$;
 
--- =============================================================================
--- ENUM: payment_status - Trạng thái thanh toán
--- =============================================================================
--- pending: Chờ thanh toán
--- success: Thanh toán thành công
--- failed: Thanh toán thất bại
--- void: Hủy bỏ
-do $$ begin
-  if not exists (select 1 from pg_type where typname = 'payment_status') then
-    create type payment_status as enum ('pending','success','failed','void');
-  end if;
-end $$;
 
 -- =============================================================================
 -- ENUM: inventory_movement_type - Loại phiếu xuất nhập kho
@@ -84,6 +72,16 @@ do $$ begin
 end $$;
 
 
+-- ================================================================================
+-- TABLE: Areas (khu vực/ấp) và liên kết area_id cho profiles
+-- ================================================================================
+create table if not exists areas (
+  id bigserial primary key,
+  name varchar(200) not null,
+  created_at timestamp not null default now()
+);
+
+
 
 -- =============================================================================
 -- TABLE: profiles - Hồ sơ người dùng (Khách hàng, NCC, Admin...)
@@ -95,17 +93,20 @@ create table if not exists profiles (
   email varchar unique,                           -- Email đăng nhập (unique)
   password_hash text,                             -- Mật khẩu đã mã hóa (bcrypt)
   name varchar,                                   -- Tên người dùng/công ty
-  sort_name varchar,                              -- Tên viết tắt/tên gọi khác (VD: "Chú Tư", "Anh Năm")
+  sort_name varchar,                              -- Tên viết tắt/tên gọi khác kèm theo tên ấp/khu vực (VD: "Chú Tư Trà Khúp", "Anh Năm Bổn Thanh")
   phone varchar,                                  -- Số điện thoại
   address text,                                   -- Địa chỉ
+  area_id bigint references areas(id) on delete set null, -- Khu vực 
   role profile_role not null default 'customer', -- Vai trò (customer/agent/supplier/admin)
   note text,                                      -- Ghi chú nội bộ
   is_active boolean not null default true,        -- Trạng thái hoạt động
-  last_login_at timestamptz,                      -- Lần đăng nhập cuối
-  created_at timestamptz not null default now()   -- Ngày tạo
+  last_login_at timestamp,                      -- Lần đăng nhập cuối
+  created_at timestamp not null default now()   -- Ngày tạo
 );
 
 -- INDEX: Tăng tốc tìm kiếm theo vai trò
 create index if not exists idx_profiles_role on profiles(role);
 -- INDEX: Tăng tốc tìm kiếm theo sort_name
 create index if not exists idx_profiles_sort_name on profiles(sort_name);
+-- INDEX: Tăng tốc tìm kiếm theo area_id
+create index if not exists idx_profiles_area_id on profiles(area_id);

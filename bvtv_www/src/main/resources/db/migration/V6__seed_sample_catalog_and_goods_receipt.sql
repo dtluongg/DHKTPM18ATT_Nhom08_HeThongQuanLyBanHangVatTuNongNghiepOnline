@@ -12,6 +12,35 @@
 -- 7. Phiếu nhập kho: 1 goods_receipt với 4 items
 -- ================================================================================
 
+
+
+-- Thêm ấp
+insert into areas (name)
+values
+  ('Ấp Bổn Thanh');
+
+insert into areas (name)
+values
+  ('Ấp Trà Khúp');
+
+  -- ================================================================================
+-- 4. SEED DATA: Khởi tạo thông tin cửa hàng mặc định
+-- ================================================================================
+-- Tạo 1 dòng store_settings với tên "Đại lý vật tư nông nghiệp Sáu Hiệp"
+do $$
+declare wh_id bigint;
+begin
+  select id into wh_id from warehouses where name='Main' limit 1;
+  if not exists (select 1 from store_settings) then
+    insert into store_settings(store_name, default_warehouse_id)
+    values ('Đại lý vật tư nông nghiệp Sáu Hiệp', wh_id);
+  else
+    update store_settings set store_name='Đại lý vật tư nông nghiệp Sáu Hiệp'
+    where id in (select id from store_settings order by id limit 1);
+  end if;
+end $$;
+
+
 -- ================================================================================
 -- 1. SEED: Dữ liệu cơ bản (payment_methods, shipping_methods, warehouses)
 -- ================================================================================

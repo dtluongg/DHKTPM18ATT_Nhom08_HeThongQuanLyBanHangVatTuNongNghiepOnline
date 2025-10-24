@@ -1,0 +1,641 @@
+{
+    "info": {
+        "name": "BVTV WWW API Collection",
+        "description": "Collection for testing BVTV WWW REST APIs - 11 tables full CRUD",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "1. Areas (Khu vực/Ấp)",
+            "item": [
+                {
+                    "name": "Get All Areas",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/areas",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "areas"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Area by ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/areas/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "areas", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Area",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Ấp Tân Thành\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/areas",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "areas"]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Area",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Ấp Tân Thành (Updated)\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/areas/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "areas", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Area",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/areas/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "areas", "1"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "2. Profiles (Khách hàng/NCC)",
+            "item": [
+                {
+                    "name": "Get All Profiles",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/profiles",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "profiles"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Profile by ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/profiles/{{profile_uuid}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "profiles", "{{profile_uuid}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Profile",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Nguyễn Văn A\",\n  \"sortName\": \"Anh A Trà Khúp\",\n  \"phone\": \"0901234567\",\n  \"address\": \"123 Đường ABC\",\n  \"role\": \"CUSTOMER\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/profiles",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "profiles"]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Profile",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Nguyễn Văn A (Updated)\",\n  \"sortName\": \"Anh A Updated\",\n  \"phone\": \"0909999999\",\n  \"address\": \"456 Đường XYZ\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/profiles/{{profile_uuid}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "profiles", "{{profile_uuid}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Profile",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/profiles/{{profile_uuid}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "profiles", "{{profile_uuid}}"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "3. Categories (Danh mục)",
+            "item": [
+                {
+                    "name": "Get All Categories",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/categories",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "categories"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Category by ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/categories/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "categories", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Category",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Dụng cụ nông nghiệp\",\n  \"slug\": \"dung-cu-nong-nghiep\",\n  \"description\": \"Các loại dụng cụ phục vụ sản xuất nông nghiệp\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/categories",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "categories"]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Category",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Dụng cụ nông nghiệp (Updated)\",\n  \"slug\": \"dung-cu-nong-nghiep-updated\",\n  \"description\": \"Mô tả cập nhật\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/categories/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "categories", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Category",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/categories/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "categories", "1"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "4. Products (Sản phẩm)",
+            "item": [
+                {
+                    "name": "Get All Products",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/products",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "products"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Product by ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/products/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "products", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Product",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Phân Lân Siêu Lân bao 50kg\",\n  \"shortName\": \"Lân to\",\n  \"brandName\": \"Lâm Thảo\",\n  \"description\": \"Phân lân hàm lượng cao\",\n  \"price\": 380000,\n  \"vatRate\": 5,\n  \"sku\": \"SLAN-50KG\",\n  \"barcode\": \"LT-SLAN-50\",\n  \"stock\": 0\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/products",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "products"]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Product",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Phân Lân Siêu Lân bao 50kg (Updated)\",\n  \"price\": 400000,\n  \"stock\": 100\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/products/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "products", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Product",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/products/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "products", "1"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "5. Payment Methods",
+            "item": [
+                {
+                    "name": "Get All Payment Methods",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/payment-methods",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "payment-methods"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Payment Method by ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/payment-methods/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "payment-methods", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Payment Method",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Ví điện tử MoMo\",\n  \"forOnline\": true,\n  \"isActive\": true\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/payment-methods",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "payment-methods"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "6. Coupons (Mã giảm giá)",
+            "item": [
+                {
+                    "name": "Get All Coupons",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/coupons",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "coupons"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Coupon by ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/coupons/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "coupons", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Coupon",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"code\": \"NEWYEAR2024\",\n  \"discountType\": \"percent\",\n  \"discountValue\": 10,\n  \"minOrderTotal\": 500000,\n  \"expiryDate\": \"2024-12-31\",\n  \"usageLimit\": 100\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/coupons",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "coupons"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "7. Orders (Đơn hàng)",
+            "item": [
+                {
+                    "name": "Get All Orders",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/orders",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "orders"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Order by ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/orders/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "orders", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Order",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"totalAmount\": 1000000,\n  \"totalVat\": 50000,\n  \"discountTotal\": 0,\n  \"status\": \"PENDING\",\n  \"paymentTerm\": \"PREPAID\",\n  \"isOnline\": true,\n  \"einvoiceRequired\": false\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/orders",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "orders"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "8. Warehouses (Kho)",
+            "item": [
+                {
+                    "name": "Get All Warehouses",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/warehouses",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "warehouses"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Warehouse by ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/warehouses/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "warehouses", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Warehouse",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Kho chi nhánh 2\",\n  \"address\": \"456 Đường DEF, TP.HCM\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/warehouses",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "warehouses"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "9. Inventory Movements",
+            "item": [
+                {
+                    "name": "Get All Inventory Movements",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/inventory-movements",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "inventory-movements"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Inventory Movement by ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/inventory-movements/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "inventory-movements", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Inventory Movement",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"productUnit\": {\"id\": 1},\n  \"warehouse\": {\"id\": 1},\n  \"type\": \"PURCHASE\",\n  \"quantity\": 50,\n  \"refTable\": \"manual\",\n  \"refId\": null\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/inventory-movements",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "inventory-movements"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "10. Store Settings",
+            "item": [
+                {
+                    "name": "Get Store Settings",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/store-settings",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "store-settings"]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Store Settings",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"storeName\": \"Đại lý vật tư nông nghiệp Sáu Hiệp (Updated)\",\n  \"phone\": \"0281234567\",\n  \"email\": \"info@sáuhiep.vn\",\n  \"address\": \"123 Đường ABC, Bà Rịa - Vũng Tàu\",\n  \"taxId\": \"1234567890\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/store-settings",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "store-settings"]
+                        }
+                    }
+                }
+            ]
+        }
+    ],
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:8080",
+            "type": "string"
+        },
+        {
+            "key": "profile_uuid",
+            "value": "paste-uuid-here-after-creating-profile",
+            "type": "string"
+        }
+    ]
+}

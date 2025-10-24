@@ -11,25 +11,7 @@
 --        (trả tiền nhà cung cấp ngay khi nhận hóa đơn)
 -- ================================================================================
 
--- ================================================================================
--- 1. VIEW: stock_on_hand (Tồn kho hiện tại)
--- ================================================================================
--- Tính tồn kho theo từng sản phẩm và kho dựa trên inventory_movements
--- Logic:
---   - Các loại TĂNG (purchase, return_in, adjustment_pos, transfer_in, conversion_in): +quantity
---   - Các loại GIẢM (sale, return_out, adjustment_neg, transfer_out, conversion_out): -quantity
--- Kết quả: qty = tổng tồn kho hiện tại
-create or replace view stock_on_hand as
-select
-  m.product_unit_id,                 -- Sản phẩm (đơn vị)
-  m.warehouse_id,                    -- Kho
-  sum(case
-        when m.type in ('purchase','return_in','adjustment_pos','transfer_in','conversion_in') then m.quantity
-        when m.type in ('sale','return_out','adjustment_neg','transfer_out','conversion_out') then -m.quantity
-        else 0
-      end) as qty                    -- Tồn kho hiện tại
-from inventory_movements m
-group by m.product_unit_id, m.warehouse_id;
+
 
 -- ================================================================================
 -- 3. TABLE: store_settings (Cài đặt cửa hàng)
@@ -45,28 +27,17 @@ create table if not exists store_settings (
   address text,                                                              -- Địa chỉ
   tax_id varchar,                                                               -- Mã số thuế
   default_warehouse_id bigint references warehouses(id) on delete set null,  -- Kho mặc định
-  currency char(3) not null default 'VND',                                   -- Tiền tệ (VND, USD...)
-  locale varchar not null default 'vi-VN',                                      -- Ngôn ngữ/vùng miền
-  created_at timestamptz not null default now(),                             -- Ngày tạo
-  updated_at timestamptz not null default now()                              -- Ngày cập nhật
+  created_at timestamp not null default now(),                             -- Ngày tạo
+  updated_at timestamp not null default now()                              -- Ngày cập nhật
 );
 
--- ================================================================================
--- 4. SEED DATA: Khởi tạo thông tin cửa hàng mặc định
--- ================================================================================
--- Tạo 1 dòng store_settings với tên "Đại lý vật tư nông nghiệp Sáu Hiệp"
-do $$
-declare wh_id bigint;
-begin
-  select id into wh_id from warehouses where name='Main' limit 1;
-  if not exists (select 1 from store_settings) then
-    insert into store_settings(store_name, default_warehouse_id)
-    values ('Đại lý vật tư nông nghiệp Sáu Hiệp', wh_id);
-  else
-    update store_settings set store_name='Đại lý vật tư nông nghiệp Sáu Hiệp'
-    where id in (select id from store_settings order by id limit 1);
-  end if;
-end $$;
+
+
+
+
+
+
+
 -- ================================================================================
 -- 5. VIEW: invoice_print_header (Header hóa đơn bán lẻ - để in)
 -- ================================================================================
@@ -117,45 +88,4 @@ select
   (oi.quantity * oi.price - oi.discount_amount) as line_total           -- Thành tiền
 from order_items oi
 join product_units pu on pu.id = oi.product_unit_id;
-
--- ================================================================================
--- 7. VIEW: goods_issue_print_header (Header phiếu xuất kho - để in)
--- ================================================================================
--- Lấy thông tin header của phiếu xuất kho (theo đơn bán)
--- Bao gồm: thông tin xuất kho, người nhận, và cửa hàng
--- Dùng để in phiếu xuất kho khi giao hàng
-create or replace view goods_issue_print_header as
-with ss as (select * from store_settings order by id desc limit 1)
-select
-  o.id as order_id,                          -- ID đơn hàng
-  o.order_no,                                -- Số đơn hàng
-  o.created_at as issue_date,                -- Ngày xuất kho
-  p.name as receiver_name,                   -- Tên người nhận
-  p.sort_name as receiver_sort_name,         -- Tên viết tắt người nhận
-  p.phone as receiver_phone,                 -- SĐT người nhận
-  p.address as receiver_address,             -- Địa chỉ người nhận
-  ss.store_name,                             -- Tên cửa hàng
-  ss.address as store_address,               -- Địa chỉ cửa hàng
-  ss.phone as store_phone                    -- SĐT cửa hàng
-from orders o
-left join profiles p on p.id = o.buyer_id
-left join ss on true;
-
--- ================================================================================
--- 8. VIEW: goods_issue_print_lines (Chi tiết phiếu xuất kho - để in)
--- ================================================================================
--- Lấy các dòng sản phẩm xuất kho
--- Bao gồm: STT, SKU, tên SP, quy cách, số lượng (không có giá)
-create or replace view goods_issue_print_lines as
-select
-  oi.order_id,                                                           -- ID đơn hàng
-  row_number() over (partition by oi.order_id order by oi.id) as line_no, -- STT dòng
-  pu.sku,                                                                -- Mã SKU
-  pu.name as product_units_name,                                               -- Tên sản phẩm
-  oi.quantity                                                            -- Số lượng xuất
-from order_items oi
-join product_units pu on pu.id = oi.product_unit_id;
-
-
-
 

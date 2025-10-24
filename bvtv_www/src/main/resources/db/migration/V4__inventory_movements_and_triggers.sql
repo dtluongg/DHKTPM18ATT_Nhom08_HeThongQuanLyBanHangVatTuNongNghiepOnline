@@ -32,7 +32,7 @@ create table if not exists inventory_movements (
   quantity integer not null check (quantity > 0),                            -- Số lượng (luôn dương, tăng/giảm phụ thuộc vào type)
   ref_table varchar,                                                         -- Tham chiếu đến bảng gốc (VD: 'goods_receipt_items', 'order_items')
   ref_id bigint,                                                             -- ID của record trong bảng gốc
-  created_at timestamptz not null default now()                              -- Thời điểm giao dịch
+  created_at timestamp not null default now()                              -- Thời điểm giao dịch
 );
 
 -- INDEX cho inventory_movements: tăng tốc truy vấn theo product, warehouse, type, và reference

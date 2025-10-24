@@ -66,10 +66,30 @@
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+    	</dependency>
 	</dependencies>
 
 	<build>
-		<plugins>
+			<plugins>
+				<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+			<!-- ...existing plugins... -->
+			
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
@@ -80,7 +100,7 @@
 				<version>11.7.2</version>
 				<configuration>
 					<url>jdbc:postgresql://aws-1-ap-southeast-1.pooler.supabase.com:6543/postgres?sslmode=require</url>
-					<user>postgres.gtisetgczrpoaqafhbbk</user>
+					<user>postgres.onxixdnbouagfotgojvf</user>
 					<password>Huy0522714563</password>
 					<driver>org.postgresql.Driver</driver>
 					<locations>

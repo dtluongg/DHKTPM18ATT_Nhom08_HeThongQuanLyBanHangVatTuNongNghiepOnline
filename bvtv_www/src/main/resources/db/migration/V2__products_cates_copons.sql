@@ -46,7 +46,7 @@ create table if not exists product_units (
   stock integer not null default 0,           -- ✅ Tồn kho hiện tại
   
   is_active boolean not null default true,
-  created_at timestamptz not null default now()
+  created_at timestamp not null default now()
 );
 
 comment on column product_units.name is 'Tên đầy đủ sản phẩm chứa quy cách và size (e.g., "Đường 1kg", "Phân NPK bao 50kg", "Thuốc chai 100ml")';

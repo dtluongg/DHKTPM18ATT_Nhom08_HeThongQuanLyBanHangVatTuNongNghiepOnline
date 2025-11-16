@@ -293,7 +293,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n  \"name\": \"Phân Lân Siêu Lân bao 50kg\",\n  \"shortName\": \"Lân to\",\n  \"brandName\": \"Lâm Thảo\",\n  \"description\": \"Phân lân hàm lượng cao\",\n  \"price\": 380000,\n  \"vatRate\": 5,\n  \"sku\": \"SLAN-50KG\",\n  \"barcode\": \"LT-SLAN-50\",\n  \"stock\": 0\n}"
+                            "raw": "{\n  \"name\": \"Phân Lân Siêu Lân bao 50kg\",\n  \"shortName\": \"Lân to\",\n  \"brandName\": \"Lâm Thảo\",\n  \"description\": \"Phân lân hàm lượng cao\",\n  \"price\": 380000,\n  \"creditPrice\": 400000,\n  \"vatRate\": 5,\n  \"sku\": \"SLAN-50KG\",\n  \"barcode\": \"LT-SLAN-50\",\n  \"stock\": 0\n}"
                         },
                         "url": {
                             "raw": "{{base_url}}/api/products",
@@ -314,7 +314,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n  \"name\": \"Phân Lân Siêu Lân bao 50kg (Updated)\",\n  \"price\": 400000,\n  \"stock\": 100\n}"
+                            "raw": "{\n  \"name\": \"Phân Lân Siêu Lân bao 50kg (Updated)\",\n  \"price\": 400000,\n  \"creditPrice\": 420000,\n  \"stock\": 100\n}"
                         },
                         "url": {
                             "raw": "{{base_url}}/api/products/1",

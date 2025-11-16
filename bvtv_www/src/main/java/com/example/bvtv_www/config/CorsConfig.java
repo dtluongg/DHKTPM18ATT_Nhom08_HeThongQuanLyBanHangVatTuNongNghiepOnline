@@ -10,8 +10,14 @@ public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")
-                .allowedOrigins("*")
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                .allowedHeaders("*");
+                .allowedOrigins(
+                    "http://localhost:3000",      // Next.js dev server
+                    "http://localhost:3001",      // Backup port
+                    "https://yourdomain.com"      // Production domain (thay bằng domain thật sau)
+                )
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
+                .allowedHeaders("*")
+                .allowCredentials(true)           // ⭐ Quan trọng: Cho phép gửi cookies/session
+                .maxAge(3600);                    // Cache preflight request 1 giờ
     }
 }

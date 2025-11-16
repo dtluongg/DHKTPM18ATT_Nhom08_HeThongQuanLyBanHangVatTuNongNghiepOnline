@@ -38,6 +38,9 @@ public class ProductUnit {
     @Column(nullable = false)
     private BigDecimal price;
 
+    @Column(name = "credit_price")
+    private BigDecimal creditPrice;
+
     @Column(unique = true)
     private String sku;
 

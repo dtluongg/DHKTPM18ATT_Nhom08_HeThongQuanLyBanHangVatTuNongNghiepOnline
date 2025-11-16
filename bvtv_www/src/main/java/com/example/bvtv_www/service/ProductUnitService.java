@@ -28,6 +28,7 @@ public class ProductUnitService {
         ProductUnit existing = findById(id);
         existing.setName(product.getName());
         existing.setPrice(product.getPrice());
+        existing.setCreditPrice(product.getCreditPrice());
         existing.setStock(product.getStock());
         return productUnitRepository.save(existing);
     }

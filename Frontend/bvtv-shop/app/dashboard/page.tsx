@@ -8,26 +8,45 @@ import { useAuthStore } from "@/store/auth-store";
 
 export default function DashboardPage() {
     const router = useRouter();
-    const { user, logout } = useAuthStore();
+    const { user, logout, checkAuth } = useAuthStore();
     const [orders, setOrders] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState<"orders" | "profile">("orders");
 
     useEffect(() => {
-        if (!user) {
-            router.push("/login");
-            return;
-        }
-        fetchOrders();
-    }, [user, router]);
+        const initDashboard = async () => {
+            // Verify session with backend
+            await checkAuth();
+
+            // Re-check user after checkAuth
+            const currentUser = useAuthStore.getState().user;
+            if (!currentUser) {
+                router.push("/login");
+                return;
+            }
+
+            fetchOrders();
+        };
+
+        initDashboard();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const fetchOrders = async () => {
         setLoading(true);
         try {
-            const response = await api.get(`/profiles/${user?.id}/orders`);
+            const response = await api.get("/orders/my-orders");
             setOrders(response.data);
         } catch (error) {
             console.error("Lỗi khi tải đơn hàng:", error);
+            if (
+                (error as { response?: { status?: number } }).response
+                    ?.status === 401
+            ) {
+                // Session expired, redirect to login
+                logout();
+                router.push("/login");
+            }
         } finally {
             setLoading(false);
         }
@@ -220,7 +239,15 @@ export default function DashboardPage() {
                                                 <div className="space-y-2 mb-3">
                                                     {order.orderItems?.map(
                                                         (
-                                                            item: any,
+                                                            item: {
+                                                                productUnit?: {
+                                                                    product?: {
+                                                                        name?: string;
+                                                                    };
+                                                                };
+                                                                quantity: number;
+                                                                unitPrice: number;
+                                                            },
                                                             index: number
                                                         ) => (
                                                             <div

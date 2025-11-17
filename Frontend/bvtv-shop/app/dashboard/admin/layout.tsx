@@ -36,6 +36,11 @@ const menuItems = [
         href: "/dashboard/admin/orders",
         icon: "🛒",
     },
+    {
+        label: "Nhập xuất kho",
+        href: "/dashboard/admin/inventory-movements",
+        icon: "📊",
+    },
 ];
 
 export default function AdminLayout({

@@ -163,6 +163,41 @@ export interface StoreSetting {
 }
 
 // ============================================================
+// Warehouse & Inventory Types
+// ============================================================
+export interface Warehouse {
+    id: number;
+    name: string;
+    location?: string;
+    isActive: boolean;
+    createdAt: string;
+}
+
+export enum InventoryMovementType {
+    PURCHASE = "PURCHASE",
+    SALE = "SALE",
+    RETURN_IN = "RETURN_IN",
+    RETURN_OUT = "RETURN_OUT",
+    ADJUSTMENT_POS = "ADJUSTMENT_POS",
+    ADJUSTMENT_NEG = "ADJUSTMENT_NEG",
+    TRANSFER_IN = "TRANSFER_IN",
+    TRANSFER_OUT = "TRANSFER_OUT",
+    CONVERSION_OUT = "CONVERSION_OUT",
+    CONVERSION_IN = "CONVERSION_IN",
+}
+
+export interface InventoryMovement {
+    id: number;
+    productUnit: ProductUnit;
+    warehouse: Warehouse;
+    type: InventoryMovementType;
+    quantity: number;
+    refTable?: string;
+    refId?: number;
+    createdAt: string;
+}
+
+// ============================================================
 // API Response Types
 // ============================================================
 export interface ApiResponse<T> {

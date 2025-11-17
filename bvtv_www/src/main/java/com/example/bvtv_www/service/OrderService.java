@@ -1,8 +1,11 @@
 package com.example.bvtv_www.service;
 
 import com.example.bvtv_www.entity.Order;
+import com.example.bvtv_www.entity.Profile;
 import com.example.bvtv_www.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -10,6 +13,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderService {
     private final OrderRepository orderRepository;
+    private final ProfileService profileService;
 
     public List<Order> findAll() {
         return orderRepository.findAll();
@@ -32,5 +36,16 @@ public class OrderService {
             existing.setNotes(order.getNotes());
         }
         return orderRepository.save(existing);
+    }
+
+    public List<Order> findMyOrders() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new RuntimeException("User not authenticated");
+        }
+        
+        String email = authentication.getName(); // email of the user
+        Profile buyer = profileService.findByEmail(email);
+        return orderRepository.findByBuyer(buyer);
     }
 }

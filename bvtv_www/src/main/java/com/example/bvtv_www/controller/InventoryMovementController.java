@@ -27,4 +27,15 @@ public class InventoryMovementController {
     public ResponseEntity<InventoryMovement> create(@RequestBody InventoryMovement movement) {
         return ResponseEntity.ok(inventoryMovementService.create(movement));
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<InventoryMovement> update(@PathVariable Long id, @RequestBody InventoryMovement movement) {
+        return ResponseEntity.ok(inventoryMovementService.update(id, movement));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        inventoryMovementService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 }

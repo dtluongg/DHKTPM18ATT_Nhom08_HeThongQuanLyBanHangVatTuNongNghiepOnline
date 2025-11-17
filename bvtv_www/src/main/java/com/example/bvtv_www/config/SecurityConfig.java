@@ -83,42 +83,58 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT, "/api/profiles/me").authenticated()
                 
                 // ============================================================
-                // STAFF + ADMIN - Management endpoints
+                // STAFF - Limited management (Orders, Customers, Inventory)
                 // ============================================================
-                // Orders management
+                // Orders management (STAFF + ADMIN)
                 .requestMatchers(HttpMethod.GET, "/api/orders/**").hasAnyRole("STAFF", "ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/orders/**").hasAnyRole("STAFF", "ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/orders/**").hasRole("ADMIN")
                 
-                // Product management
-                .requestMatchers(HttpMethod.POST, "/api/product-units/**").hasAnyRole("STAFF", "ADMIN")
-                .requestMatchers(HttpMethod.PUT, "/api/product-units/**").hasAnyRole("STAFF", "ADMIN")
-                
-                // Category management
-                .requestMatchers(HttpMethod.POST, "/api/categories/**").hasAnyRole("STAFF", "ADMIN")
-                .requestMatchers(HttpMethod.PUT, "/api/categories/**").hasAnyRole("STAFF", "ADMIN")
-                
-                // Coupon management
-                .requestMatchers(HttpMethod.POST, "/api/coupons/**").hasAnyRole("STAFF", "ADMIN")
-                .requestMatchers(HttpMethod.PUT, "/api/coupons/**").hasAnyRole("STAFF", "ADMIN")
-                
-                // Area management
-                .requestMatchers(HttpMethod.POST, "/api/areas/**").hasAnyRole("STAFF", "ADMIN")
-                .requestMatchers(HttpMethod.PUT, "/api/areas/**").hasAnyRole("STAFF", "ADMIN")
-                
-                // Profile management
+                // Customer/Profile management (STAFF + ADMIN)
                 .requestMatchers(HttpMethod.GET, "/api/profiles").hasAnyRole("STAFF", "ADMIN")
                 .requestMatchers(HttpMethod.POST, "/api/profiles").hasAnyRole("STAFF", "ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/profiles/**").hasAnyRole("STAFF", "ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/profiles/**").hasRole("ADMIN")
+                
+                // Inventory movements management (STAFF + ADMIN)
+                .requestMatchers(HttpMethod.GET, "/api/inventory-movements/**").hasAnyRole("STAFF", "ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/inventory-movements/**").hasAnyRole("STAFF", "ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/inventory-movements/**").hasAnyRole("STAFF", "ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/inventory-movements/**").hasRole("ADMIN")
+                
+                // Area management (STAFF + ADMIN)
+                .requestMatchers(HttpMethod.POST, "/api/areas/**").hasAnyRole("STAFF", "ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/areas/**").hasAnyRole("STAFF", "ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/areas/**").hasRole("ADMIN")
                 
                 // ============================================================
-                // ADMIN ONLY - Delete operations
+                // ADMIN ONLY - Full system management
                 // ============================================================
+                // Product management (ADMIN only)
+                .requestMatchers(HttpMethod.POST, "/api/product-units/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/product-units/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/product-units/**").hasRole("ADMIN")
+                
+                // Category management (ADMIN only)
+                .requestMatchers(HttpMethod.POST, "/api/categories/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/categories/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/categories/**").hasRole("ADMIN")
+                
+                // Coupon management (ADMIN only)
+                .requestMatchers(HttpMethod.POST, "/api/coupons/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/coupons/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/coupons/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/api/areas/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/api/profiles/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/api/orders/**").hasRole("ADMIN")
+                
+                // Warehouse management (ADMIN only)
+                .requestMatchers(HttpMethod.GET, "/api/warehouses/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/warehouses/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/warehouses/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/warehouses/**").hasRole("ADMIN")
+                
+                // Store settings (ADMIN only)
+                .requestMatchers(HttpMethod.POST, "/api/store-settings/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/store-settings/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/store-settings/**").hasRole("ADMIN")
                 
                 // Default: require authentication
                 .anyRequest().authenticated()

@@ -23,4 +23,20 @@ public class InventoryMovementService {
     public InventoryMovement create(InventoryMovement movement) {
         return inventoryMovementRepository.save(movement);
     }
+
+    public InventoryMovement update(Long id, InventoryMovement movement) {
+        InventoryMovement existingMovement = findById(id);
+        existingMovement.setProductUnit(movement.getProductUnit());
+        existingMovement.setWarehouse(movement.getWarehouse());
+        existingMovement.setType(movement.getType());
+        existingMovement.setQuantity(movement.getQuantity());
+        existingMovement.setRefTable(movement.getRefTable());
+        existingMovement.setRefId(movement.getRefId());
+        return inventoryMovementRepository.save(existingMovement);
+    }
+
+    public void delete(Long id) {
+        InventoryMovement movement = findById(id);
+        inventoryMovementRepository.delete(movement);
+    }
 }

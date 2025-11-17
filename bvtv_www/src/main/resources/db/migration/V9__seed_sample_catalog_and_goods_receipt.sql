@@ -419,7 +419,7 @@ SELECT
   '0522714563',
   'Ấp Bổn Thanh, xã Ngũ Lạc, phường Duyên Hải, tỉnh Vĩnh Long',
   (SELECT id FROM areas WHERE name='Ấp Bổn Thanh'),
-  'admin',
+  'ADMIN',
   true
 WHERE NOT EXISTS (SELECT 1 FROM profiles WHERE email = 'admin@sauhiep.vn');
 
@@ -435,48 +435,48 @@ SELECT
   '0908234567',
   'Ấp Bổn Thanh, xã Ngũ Lạc, phường Duyên Hải, tỉnh Vĩnh Long',
   (SELECT id FROM areas WHERE name='Ấp Bổn Thanh'),
-  'staff',
+  'STAFF',
   true
 WHERE NOT EXISTS (SELECT 1 FROM profiles WHERE email = 'nhanvien@sauhiep.vn');
 
 -- Customers
 INSERT INTO profiles (name, sort_name, phone, address, area_id, role, note, is_active) VALUES
   ('Lê Văn Tư', 'Chú Tư Trà Khúp', '0901234567', 'Ấp Trà Khúp, Tân Thành, Tân Phú, Đồng Nai', 
-   (SELECT id FROM areas WHERE name='Ấp Trà Khúp'), 'customer', 'Khách quen, thường mua phân bón', true),
+   (SELECT id FROM areas WHERE name='Ấp Trà Khúp'), 'CUSTOMER', 'Khách quen, thường mua phân bón', true),
   
   ('Phạm Thị Năm', 'Cô Năm Bổn Thanh', '0902345678', 'Ấp Bổn Thanh, xã Ngũ Lạc, phường Duyên Hải, tỉnh Vĩnh Long',
-   (SELECT id FROM areas WHERE name='Ấp Bổn Thanh'), 'customer', 'Trồng lúa, có thể bán công nợ', true),
+   (SELECT id FROM areas WHERE name='Ấp Bổn Thanh'), 'CUSTOMER', 'Trồng lúa, có thể bán công nợ', true),
   
   ('Huỳnh Văn Bảy', 'Anh Bảy Sóc Cuôi', '0903456789', 'Ấp Sóc Cuôi, xã Ngũ Lạc, phường Duyên Hải, tỉnh Vĩnh Long',
-   (SELECT id FROM areas WHERE name='Ấp Sóc Cuôi'), 'customer', 'Trồng ngô, hay mua thuốc trừ sâu', true),
+   (SELECT id FROM areas WHERE name='Ấp Sóc Cuôi'), 'CUSTOMER', 'Trồng ngô, hay mua thuốc trừ sâu', true),
   
   ('Nguyễn Thị Tám', 'Bà Tám Sóc Ớt', '0904567890', 'Ấp Sóc Ớt, xã Ngũ Lạc, phường Duyên Hải, tỉnh Vĩnh Long',
-   (SELECT id FROM areas WHERE name='Ấp Sóc Ớt'), 'customer', NULL, true),
+   (SELECT id FROM areas WHERE name='Ấp Sóc Ớt'), 'CUSTOMER', NULL, true),
   
   ('Võ Văn Chín', 'Chú Chín Bàu Cát', '0905678901', 'Ấp Bàu Cát, xã Ngũ Lạc, phường Duyên Hải, tỉnh Vĩnh Long',
-   (SELECT id FROM areas WHERE name='Ấp Bàu Cát'), 'customer', 'Khách mới, thanh toán tiền mặt', true),
+   (SELECT id FROM areas WHERE name='Ấp Bàu Cát'), 'CUSTOMER', 'Khách mới, thanh toán tiền mặt', true),
   
   ('Trần Văn Mười', 'Anh Mười Trà Khúp', '0906789012', 'Ấp Trà Khúp, xã Ngũ Lạc, phường Duyên Hải, tỉnh Vĩnh Long',
-   (SELECT id FROM areas WHERE name='Ấp Trà Khúp'), 'customer', 'Khách VIP, hay mua số lượng lớn', true);
+   (SELECT id FROM areas WHERE name='Ấp Trà Khúp'), 'CUSTOMER', 'Khách VIP, hay mua số lượng lớn', true);
 
 -- Suppliers
 INSERT INTO profiles (name, sort_name, phone, address, role, note, is_active) VALUES
   ('Công ty TNHH Phân bón Phú Mỹ', 'Phú Mỹ', '02513822222', 'KCN Phú Mỹ, Bà Rịa - Vũng Tàu', 
-   'supplier', 'Nhà cung cấp phân bón chính', true),
+   'SUPPLIER', 'Nhà cung cấp phân bón chính', true),
   
   ('Công ty CP Hóa chất Lâm Thảo', 'Lâm Thảo', '02103852222', 'Lâm Thảo, Phú Thọ',
-   'supplier', 'Nhà cung cấp phân bón NPK, DAP', true),
+   'SUPPLIER', 'Nhà cung cấp phân bón NPK, DAP', true),
   
   ('Công ty TNHH Bayer Việt Nam', 'Bayer VN', '02838242424', 'Quận 1, TP.HCM',
-   'supplier', 'Nhà cung cấp thuốc BVTV nhập khẩu', true),
+   'SUPPLIER', 'Nhà cung cấp thuốc BVTV nhập khẩu', true),
   
   ('Công ty TNHH Syngenta Việt Nam', 'Syngenta VN', '02838345678', 'Quận 1, TP.HCM',
-   'supplier', 'Nhà cung cấp thuốc BVTV cao cấp', true);
+   'SUPPLIER', 'Nhà cung cấp thuốc BVTV cao cấp', true);
 
 -- Agents
 INSERT INTO profiles (name, sort_name, phone, address, area_id, role, note, is_active) VALUES
   ('Đại lý Nông nghiệp Tân Phú', 'ĐL Tân Phú', '0907890123', 'TT Tân Phú, Tân Phú, Đồng Nai',
-   NULL, 'agent', 'Đại lý cấp 2, bán buôn', true);
+   NULL, 'AGENT', 'Đại lý cấp 2, bán buôn', true);
 
 -- ================================================================================
 -- 9. SEED: Inventory Movements (Nhập kho ban đầu)
@@ -492,77 +492,77 @@ BEGIN
   -- NPK 16-16-8 25kg: Nhập 100 bao
   SELECT id INTO pu_id FROM product_units WHERE sku='NPK-16168-25KG';
   INSERT INTO inventory_movements (product_unit_id, warehouse_id, type, quantity, ref_table, ref_id, created_at)
-  VALUES (pu_id, wh_id, 'purchase', 100, 'manual_init', NULL, NOW() - INTERVAL '30 days');
+  VALUES (pu_id, wh_id, 'PURCHASE', 100, 'manual_init', NULL, NOW() - INTERVAL '30 days');
   
   -- NPK 20-20-15 50kg: Nhập 50 bao
   SELECT id INTO pu_id FROM product_units WHERE sku='NPK-202015-50KG';
   INSERT INTO inventory_movements (product_unit_id, warehouse_id, type, quantity, ref_table, ref_id, created_at)
-  VALUES (pu_id, wh_id, 'purchase', 50, 'manual_init', NULL, NOW() - INTERVAL '30 days');
+  VALUES (pu_id, wh_id, 'PURCHASE', 50, 'manual_init', NULL, NOW() - INTERVAL '30 days');
   
   -- Ure 50kg: Nhập 80 bao
   SELECT id INTO pu_id FROM product_units WHERE sku='URE-PM-50KG';
   INSERT INTO inventory_movements (product_unit_id, warehouse_id, type, quantity, ref_table, ref_id, created_at)
-  VALUES (pu_id, wh_id, 'purchase', 80, 'manual_init', NULL, NOW() - INTERVAL '30 days');
+  VALUES (pu_id, wh_id, 'PURCHASE', 80, 'manual_init', NULL, NOW() - INTERVAL '30 days');
   
   -- DAP 50kg: Nhập 40 bao
   SELECT id INTO pu_id FROM product_units WHERE sku='DAP-LT-50KG';
   INSERT INTO inventory_movements (product_unit_id, warehouse_id, type, quantity, ref_table, ref_id, created_at)
-  VALUES (pu_id, wh_id, 'purchase', 40, 'manual_init', NULL, NOW() - INTERVAL '30 days');
+  VALUES (pu_id, wh_id, 'PURCHASE', 40, 'manual_init', NULL, NOW() - INTERVAL '30 days');
   
   -- Tribat 40kg: Nhập 30 bao
   SELECT id INTO pu_id FROM product_units WHERE sku='TRIBAT-40KG';
   INSERT INTO inventory_movements (product_unit_id, warehouse_id, type, quantity, ref_table, ref_id, created_at)
-  VALUES (pu_id, wh_id, 'purchase', 30, 'manual_init', NULL, NOW() - INTERVAL '30 days');
+  VALUES (pu_id, wh_id, 'PURCHASE', 30, 'manual_init', NULL, NOW() - INTERVAL '30 days');
   
   -- Karate 100ml: Nhập 200 chai
   SELECT id INTO pu_id FROM product_units WHERE sku='KARATE-100ML';
   INSERT INTO inventory_movements (product_unit_id, warehouse_id, type, quantity, ref_table, ref_id, created_at)
-  VALUES (pu_id, wh_id, 'purchase', 200, 'manual_init', NULL, NOW() - INTERVAL '25 days');
+  VALUES (pu_id, wh_id, 'PURCHASE', 200, 'manual_init', NULL, NOW() - INTERVAL '25 days');
   
   -- Karate 500ml: Nhập 50 chai
   SELECT id INTO pu_id FROM product_units WHERE sku='KARATE-500ML';
   INSERT INTO inventory_movements (product_unit_id, warehouse_id, type, quantity, ref_table, ref_id, created_at)
-  VALUES (pu_id, wh_id, 'purchase', 50, 'manual_init', NULL, NOW() - INTERVAL '25 days');
+  VALUES (pu_id, wh_id, 'PURCHASE', 50, 'manual_init', NULL, NOW() - INTERVAL '25 days');
   
   -- Ridomil 100g: Nhập 150 gói
   SELECT id INTO pu_id FROM product_units WHERE sku='RIDOMIL-100G';
   INSERT INTO inventory_movements (product_unit_id, warehouse_id, type, quantity, ref_table, ref_id, created_at)
-  VALUES (pu_id, wh_id, 'purchase', 150, 'manual_init', NULL, NOW() - INTERVAL '25 days');
+  VALUES (pu_id, wh_id, 'PURCHASE', 150, 'manual_init', NULL, NOW() - INTERVAL '25 days');
   
   -- Antracol 1kg: Nhập 60 gói
   SELECT id INTO pu_id FROM product_units WHERE sku='ANTRACOL-1KG';
   INSERT INTO inventory_movements (product_unit_id, warehouse_id, type, quantity, ref_table, ref_id, created_at)
-  VALUES (pu_id, wh_id, 'purchase', 60, 'manual_init', NULL, NOW() - INTERVAL '25 days');
+  VALUES (pu_id, wh_id, 'PURCHASE', 60, 'manual_init', NULL, NOW() - INTERVAL '25 days');
   
   -- Gramoxone 1L: Nhập 80 chai
   SELECT id INTO pu_id FROM product_units WHERE sku='GRAMOXONE-1L';
   INSERT INTO inventory_movements (product_unit_id, warehouse_id, type, quantity, ref_table, ref_id, created_at)
-  VALUES (pu_id, wh_id, 'purchase', 80, 'manual_init', NULL, NOW() - INTERVAL '20 days');
+  VALUES (pu_id, wh_id, 'PURCHASE', 80, 'manual_init', NULL, NOW() - INTERVAL '20 days');
   
   -- Butachlor 1L: Nhập 100 chai
   SELECT id INTO pu_id FROM product_units WHERE sku='BUTACHLOR-1L';
   INSERT INTO inventory_movements (product_unit_id, warehouse_id, type, quantity, ref_table, ref_id, created_at)
-  VALUES (pu_id, wh_id, 'purchase', 100, 'manual_init', NULL, NOW() - INTERVAL '20 days');
+  VALUES (pu_id, wh_id, 'PURCHASE', 100, 'manual_init', NULL, NOW() - INTERVAL '20 days');
   
   -- Hạt giống ST25 1kg: Nhập 50 gói
   SELECT id INTO pu_id FROM product_units WHERE sku='SEED-ST25-1KG';
   INSERT INTO inventory_movements (product_unit_id, warehouse_id, type, quantity, ref_table, ref_id, created_at)
-  VALUES (pu_id, wh_id, 'purchase', 50, 'manual_init', NULL, NOW() - INTERVAL '15 days');
+  VALUES (pu_id, wh_id, 'PURCHASE', 50, 'manual_init', NULL, NOW() - INTERVAL '15 days');
   
   -- Hạt giống CP888 500g: Nhập 40 gói
   SELECT id INTO pu_id FROM product_units WHERE sku='SEED-CP888-500G';
   INSERT INTO inventory_movements (product_unit_id, warehouse_id, type, quantity, ref_table, ref_id, created_at)
-  VALUES (pu_id, wh_id, 'purchase', 40, 'manual_init', NULL, NOW() - INTERVAL '15 days');
+  VALUES (pu_id, wh_id, 'PURCHASE', 40, 'manual_init', NULL, NOW() - INTERVAL '15 days');
   
   -- Bình xịt 16L: Nhập 20 cái
   SELECT id INTO pu_id FROM product_units WHERE sku='TOOL-SPRAYER-16L';
   INSERT INTO inventory_movements (product_unit_id, warehouse_id, type, quantity, ref_table, ref_id, created_at)
-  VALUES (pu_id, wh_id, 'purchase', 20, 'manual_init', NULL, NOW() - INTERVAL '10 days');
+  VALUES (pu_id, wh_id, 'PURCHASE', 20, 'manual_init', NULL, NOW() - INTERVAL '10 days');
   
   -- Máy phun Honda: Nhập 5 cái
   SELECT id INTO pu_id FROM product_units WHERE sku='TOOL-SPRAYER-HONDA';
   INSERT INTO inventory_movements (product_unit_id, warehouse_id, type, quantity, ref_table, ref_id, created_at)
-  VALUES (pu_id, wh_id, 'purchase', 5, 'manual_init', NULL, NOW() - INTERVAL '10 days');
+  VALUES (pu_id, wh_id, 'PURCHASE', 5, 'manual_init', NULL, NOW() - INTERVAL '10 days');
   
 END $$;
 
@@ -588,7 +588,7 @@ BEGIN
   
   -- Tạo order
   INSERT INTO orders (buyer_id, total_amount, total_vat, discount_total, status, payment_method_id, payment_term, is_online, created_at)
-  VALUES (buyer_uuid, 3310000, 157619, 0, 'completed', pm_id, 'prepaid', false, NOW() - INTERVAL '20 days')
+  VALUES (buyer_uuid, 3310000, 157619, 0, 'COMPLETED', pm_id, 'PREPAID', false, NOW() - INTERVAL '20 days')
   RETURNING id INTO ord_id;
   
   -- Order item 1: NPK 16-16-8 25kg x 5 bao
@@ -600,7 +600,7 @@ BEGIN
   
   -- Tạo inventory movement cho order item 1
   INSERT INTO inventory_movements (product_unit_id, warehouse_id, type, quantity, ref_table, ref_id, created_at)
-  VALUES (pu_id, wh_id, 'sale', item_qty, 'order_items', currval('order_items_id_seq'), NOW() - INTERVAL '20 days');
+  VALUES (pu_id, wh_id, 'SALE', item_qty, 'order_items', currval('order_items_id_seq'), NOW() - INTERVAL '20 days');
   
   -- Order item 2: Ure 50kg x 2 bao
   SELECT id, price, vat_rate INTO pu_id, item_price, item_vat_rate FROM product_units WHERE sku='URE-PM-50KG';
@@ -611,7 +611,7 @@ BEGIN
   
   -- Tạo inventory movement cho order item 2
   INSERT INTO inventory_movements (product_unit_id, warehouse_id, type, quantity, ref_table, ref_id, created_at)
-  VALUES (pu_id, wh_id, 'sale', item_qty, 'order_items', currval('order_items_id_seq'), NOW() - INTERVAL '20 days');
+  VALUES (pu_id, wh_id, 'SALE', item_qty, 'order_items', currval('order_items_id_seq'), NOW() - INTERVAL '20 days');
   
   -- Order item 3: Karate 100ml x 10 chai
   SELECT id, price, vat_rate INTO pu_id, item_price, item_vat_rate FROM product_units WHERE sku='KARATE-100ML';
@@ -622,7 +622,7 @@ BEGIN
   
   -- Tạo inventory movement cho order item 3
   INSERT INTO inventory_movements (product_unit_id, warehouse_id, type, quantity, ref_table, ref_id, created_at)
-  VALUES (pu_id, wh_id, 'sale', item_qty, 'order_items', currval('order_items_id_seq'), NOW() - INTERVAL '20 days');
+  VALUES (pu_id, wh_id, 'SALE', item_qty, 'order_items', currval('order_items_id_seq'), NOW() - INTERVAL '20 days');
   
 END $$;
 
@@ -645,7 +645,7 @@ BEGIN
   
   -- Tạo order
   INSERT INTO orders (buyer_id, total_amount, total_vat, discount_total, status, payment_method_id, payment_term, is_online, created_at)
-  VALUES (buyer_uuid, 2310000, 110000, 0, 'confirmed', pm_id, 'credit', false, NOW() - INTERVAL '15 days')
+  VALUES (buyer_uuid, 2310000, 110000, 0, 'CONFIRMED', pm_id, 'CREDIT', false, NOW() - INTERVAL '15 days')
   RETURNING id INTO ord_id;
   
   -- Order item 1: NPK 20-20-15 50kg x 2 bao
@@ -657,7 +657,7 @@ BEGIN
   
   -- Tạo inventory movement
   INSERT INTO inventory_movements (product_unit_id, warehouse_id, type, quantity, ref_table, ref_id, created_at)
-  VALUES (pu_id, wh_id, 'sale', item_qty, 'order_items', currval('order_items_id_seq'), NOW() - INTERVAL '15 days');
+  VALUES (pu_id, wh_id, 'SALE', item_qty, 'order_items', currval('order_items_id_seq'), NOW() - INTERVAL '15 days');
   
   -- Order item 2: Butachlor 1L x 6 chai
   SELECT id, price, vat_rate INTO pu_id, item_price, item_vat_rate FROM product_units WHERE sku='BUTACHLOR-1L';
@@ -668,7 +668,7 @@ BEGIN
   
   -- Tạo inventory movement
   INSERT INTO inventory_movements (product_unit_id, warehouse_id, type, quantity, ref_table, ref_id, created_at)
-  VALUES (pu_id, wh_id, 'sale', item_qty, 'order_items', currval('order_items_id_seq'), NOW() - INTERVAL '15 days');
+  VALUES (pu_id, wh_id, 'SALE', item_qty, 'order_items', currval('order_items_id_seq'), NOW() - INTERVAL '15 days');
   
 END $$;
 
@@ -691,7 +691,7 @@ BEGIN
   
   -- Tạo order
   INSERT INTO orders (buyer_id, total_amount, total_vat, discount_total, status, payment_method_id, payment_term, is_online, created_at)
-  VALUES (buyer_uuid, 1505000, 136818, 0, 'completed', pm_id, 'prepaid', false, NOW() - INTERVAL '10 days')
+  VALUES (buyer_uuid, 1505000, 136818, 0, 'COMPLETED', pm_id, 'PREPAID', false, NOW() - INTERVAL '10 days')
   RETURNING id INTO ord_id;
   
   -- Order item 1: Karate 500ml x 3 chai
@@ -702,7 +702,7 @@ BEGIN
   VALUES (ord_id, pu_id, item_qty, item_price, 0, item_vat_rate, item_vat_amt);
   
   INSERT INTO inventory_movements (product_unit_id, warehouse_id, type, quantity, ref_table, ref_id, created_at)
-  VALUES (pu_id, wh_id, 'sale', item_qty, 'order_items', currval('order_items_id_seq'), NOW() - INTERVAL '10 days');
+  VALUES (pu_id, wh_id, 'SALE', item_qty, 'order_items', currval('order_items_id_seq'), NOW() - INTERVAL '10 days');
   
   -- Order item 2: Ridomil 100g x 5 gói
   SELECT id, price, vat_rate INTO pu_id, item_price, item_vat_rate FROM product_units WHERE sku='RIDOMIL-100G';
@@ -712,7 +712,7 @@ BEGIN
   VALUES (ord_id, pu_id, item_qty, item_price, 0, item_vat_rate, item_vat_amt);
   
   INSERT INTO inventory_movements (product_unit_id, warehouse_id, type, quantity, ref_table, ref_id, created_at)
-  VALUES (pu_id, wh_id, 'sale', item_qty, 'order_items', currval('order_items_id_seq'), NOW() - INTERVAL '10 days');
+  VALUES (pu_id, wh_id, 'SALE', item_qty, 'order_items', currval('order_items_id_seq'), NOW() - INTERVAL '10 days');
   
   -- Order item 3: Antracol 1kg x 4 gói
   SELECT id, price, vat_rate INTO pu_id, item_price, item_vat_rate FROM product_units WHERE sku='ANTRACOL-1KG';
@@ -722,7 +722,7 @@ BEGIN
   VALUES (ord_id, pu_id, item_qty, item_price, 0, item_vat_rate, item_vat_amt);
   
   INSERT INTO inventory_movements (product_unit_id, warehouse_id, type, quantity, ref_table, ref_id, created_at)
-  VALUES (pu_id, wh_id, 'sale', item_qty, 'order_items', currval('order_items_id_seq'), NOW() - INTERVAL '10 days');
+  VALUES (pu_id, wh_id, 'SALE', item_qty, 'order_items', currval('order_items_id_seq'), NOW() - INTERVAL '10 days');
   
 END $$;
 
@@ -743,7 +743,7 @@ BEGIN
   
   -- Tạo order (chưa giao nên không trừ kho)
   INSERT INTO orders (buyer_id, total_amount, total_vat, discount_total, status, payment_method_id, payment_term, is_online, created_at)
-  VALUES (buyer_uuid, 7400000, 672727, 0, 'pending', pm_id, 'cod', true, NOW() - INTERVAL '2 days')
+  VALUES (buyer_uuid, 7400000, 672727, 0, 'PENDING', pm_id, 'COD', true, NOW() - INTERVAL '2 days')
   RETURNING id INTO ord_id;
   
   -- Order item 1: Máy phun Honda x 1 cái

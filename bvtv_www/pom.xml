@@ -72,6 +72,14 @@
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
     	</dependency>
+
+		<!-- Spring Boot DevTools - Auto-restart khi code thay đổi -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -99,8 +107,8 @@
 				<artifactId>flyway-maven-plugin</artifactId>
 				<version>11.7.2</version>
 				<configuration>
-					<url>jdbc:postgresql://aws-1-ap-southeast-1.pooler.supabase.com:6543/postgres?sslmode=require</url>
-					<user>postgres.kaowbattcqlepsymmrix</user>
+					<url>jdbc:postgresql://aws-1-ap-southeast-1.pooler.supabase.com:5432/postgres?sslmode=require</url>
+					<user>postgres.znzhkmbiksyesimuwysr</user>
 					<password>Huy0522714563</password>
 					<driver>org.postgresql.Driver</driver>
 					<locations>

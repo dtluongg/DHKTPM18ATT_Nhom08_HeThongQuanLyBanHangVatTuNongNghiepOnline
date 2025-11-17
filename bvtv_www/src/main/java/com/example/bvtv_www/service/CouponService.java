@@ -12,7 +12,8 @@ public class CouponService {
     private final CouponRepository couponRepository;
 
     public List<Coupon> findAll() {
-        return couponRepository.findAll();
+        // Chỉ lấy mã giảm giá isActive = true (chưa xóa mềm)
+        return couponRepository.findByIsActive(true);
     }
 
     public Coupon findById(Long id) {

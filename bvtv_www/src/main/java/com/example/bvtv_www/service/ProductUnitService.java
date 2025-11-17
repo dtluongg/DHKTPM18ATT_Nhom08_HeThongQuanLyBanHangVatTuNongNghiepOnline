@@ -12,7 +12,13 @@ public class ProductUnitService {
     private final ProductUnitRepository productUnitRepository;
 
     public List<ProductUnit> findAll() {
-        return productUnitRepository.findAll();
+        // Chỉ lấy sản phẩm isActive = true (chưa xóa mềm)
+        return productUnitRepository.findByIsActive(true);
+    }
+    
+    public List<ProductUnit> findAllActive() {
+        // Lấy sản phẩm isActive=true và isSelling=true (đang bán)
+        return productUnitRepository.findByIsActiveAndIsSelling(true, true);
     }
 
     public ProductUnit findById(Long id) {
@@ -34,6 +40,9 @@ public class ProductUnitService {
     }
 
     public void delete(Long id) {
-        productUnitRepository.deleteById(id);
+        // Soft delete: set isActive = false
+        ProductUnit existing = findById(id);
+        existing.setIsActive(false);
+        productUnitRepository.save(existing);
     }
 }

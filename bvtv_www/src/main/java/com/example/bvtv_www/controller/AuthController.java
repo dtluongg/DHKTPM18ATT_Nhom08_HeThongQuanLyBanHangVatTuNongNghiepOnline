@@ -1,15 +1,24 @@
 package com.example.bvtv_www.controller;
 
+import com.example.bvtv_www.dto.LoginRequest;
+import com.example.bvtv_www.dto.RegisterRequest;
 import com.example.bvtv_www.entity.Profile;
 import com.example.bvtv_www.enums.ProfileRole;
 import com.example.bvtv_www.repository.ProfileRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,15 +28,12 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/auth")
+@RequiredArgsConstructor
 public class AuthController {
 
     private final ProfileRepository profileRepository;
     private final PasswordEncoder passwordEncoder;
-
-    public AuthController(ProfileRepository profileRepository, PasswordEncoder passwordEncoder) {
-        this.profileRepository = profileRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
+    private final AuthenticationManager authenticationManager;
 
     /**
      * Đăng ký tài khoản mới (Customer)
@@ -53,6 +59,60 @@ public class AuthController {
         profileRepository.save(profile);
 
         return ResponseEntity.ok(Map.of("message", "Đăng ký thành công"));
+    }
+
+    /**
+     * Đăng nhập - Sử dụng AuthenticationManager để Spring Security nhận diện role
+     */
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginRequest request, HttpServletRequest httpRequest) {
+        try {
+            // Authenticate user với Spring Security
+            UsernamePasswordAuthenticationToken authToken = 
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword());
+            
+            Authentication authentication = authenticationManager.authenticate(authToken);
+            
+            // Lưu authentication vào SecurityContext
+            SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
+            securityContext.setAuthentication(authentication);
+            SecurityContextHolder.setContext(securityContext);
+            
+            // Lưu SecurityContext vào session để persist qua các request
+            HttpSession session = httpRequest.getSession(true);
+            session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext);
+            
+            // Lấy thông tin user để trả về
+            Profile profile = profileRepository.findByEmail(request.getEmail())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            
+            // Trả về thông tin user
+            Map<String, Object> response = new HashMap<>();
+            response.put("id", profile.getId());
+            response.put("email", profile.getEmail());
+            response.put("name", profile.getName());
+            response.put("phone", profile.getPhone());
+            response.put("address", profile.getAddress());
+            response.put("role", profile.getRole().name());
+
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Email hoặc mật khẩu không đúng"));
+        }
+    }
+
+    /**
+     * Đăng xuất
+     */
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+        return ResponseEntity.ok(Map.of("message", "Đăng xuất thành công"));
     }
 
     /**
@@ -109,31 +169,4 @@ public class AuthController {
 
         return ResponseEntity.ok(response);
     }
-}
-
-/**
- * DTO cho đăng ký
- */
-class RegisterRequest {
-    private String email;
-    private String password;
-    private String name;
-    private String phone;
-    private String address;
-
-    // Getters and Setters
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
-    
-    public String getPassword() { return password; }
-    public void setPassword(String password) { this.password = password; }
-    
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-    
-    public String getPhone() { return phone; }
-    public void setPhone(String phone) { this.phone = phone; }
-    
-    public String getAddress() { return address; }
-    public void setAddress(String address) { this.address = address; }
 }

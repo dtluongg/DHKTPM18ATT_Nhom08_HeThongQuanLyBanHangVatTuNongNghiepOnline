@@ -6,7 +6,7 @@
 
 ✅ **Có thể:**
 
--   Xem danh sách sản phẩm (`GET /api/products/**`)
+-   Xem danh sách sản phẩm (`GET /api/product-units/**`)
 -   Xem danh mục (`GET /api/categories/**`)
 -   Xem phương thức thanh toán (`GET /api/payment-methods`)
 -   Xem thông tin cửa hàng (`GET /api/store-settings`)

@@ -19,7 +19,8 @@ create table if not exists categories (
   id bigserial primary key,          -- ID tự tăng
   name varchar not null,              -- Tên danh mục (VD: "Phân bón lá", "Thuốc trừ sâu")
   slug varchar unique,                -- URL-friendly slug (VD: "phan-bon-la")
-  description text                    -- Mô tả chi tiết danh mục
+  description text,                   -- Mô tả chi tiết danh mục
+  is_active boolean not null default true
 );
 
 -- ================================================================================
@@ -41,11 +42,14 @@ create table if not exists product_units (
   -- Thông tin bán hàng
   short_name varchar,                         -- ✅ Tên gọi tắt cho POS (VD: "NPK to", "Regent nhỏ")
   price numeric not null,                     -- ✅ Giá bán (đã bao gồm VAT)
+  credit_price numeric,                       -- ✅ Giá bán nợ cho khách mua trực tiếp
   sku varchar unique,                         -- ✅ Mã SKU nội bộ
   barcode varchar unique,                     -- ✅ Mã vạch (để quét)
   stock integer not null default 0,           -- ✅ Tồn kho hiện tại
   
-  is_active boolean not null default true,
+  -- Trạng thái
+  is_selling boolean not null default true,   -- ✅ Đang kinh doanh / Ngừng kinh doanh
+  is_active boolean not null default true,    -- ✅ Soft delete (ẩn/hiện trên hệ thống)
   created_at timestamp not null default now()
 );
 
@@ -82,5 +86,6 @@ create table if not exists coupons (
   discount_value numeric,             -- Giá trị giảm (VD: 10% hoặc 50,000đ)
   min_order_total numeric,            -- Giá trị đơn hàng tối thiểu để áp dụng
   expiry_date date,                   -- Ngày hết hạn
-  usage_limit integer                 -- Số lần sử dụng tối đa (null = không giới hạn)
+  usage_limit integer,                -- Số lần sử dụng tối đa (null = không giới hạn)
+  is_active boolean not null default true
 );

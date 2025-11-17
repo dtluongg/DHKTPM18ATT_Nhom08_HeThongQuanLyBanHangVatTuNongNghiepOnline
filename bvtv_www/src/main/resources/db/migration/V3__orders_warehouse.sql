@@ -21,12 +21,19 @@ create table if not exists orders (
   total_amount numeric not null,                                             -- Tổng tiền đơn hàng (đã bao gồm VAT)
   total_vat numeric not null default 0,                                      -- Tổng tiền VAT của đơn hàng (sum của vat_amount từ order_items)
   discount_total numeric not null default 0,                                 -- Tổng giảm giá (từ coupon hoặc chiết khấu)
-  status order_status not null default 'pending',                            -- Trạng thái: pending, confirmed, shipped, completed, cancelled
+  status varchar(20) not null default 'PENDING' check (status in ('PENDING','CONFIRMED','SHIPPED','COMPLETED','CANCELLED')), -- Trạng thái
   payment_method_id bigint references payment_methods(id) on delete set null,   -- Phương thức thanh toán
   coupon_id bigint references coupons(id) on delete set null,                -- Mã giảm giá đã sử dụng
-  payment_term payment_term not null default 'prepaid',                      -- Điều kiện thanh toán: prepaid (trả trước), cod (thu tiền khi giao), credit (công nợ)
+  payment_term varchar(20) not null default 'PREPAID' check (payment_term in ('PREPAID','COD','CREDIT')), -- Điều kiện thanh toán
   is_online boolean not null default true,                                   -- Kênh bán hàng: true = Online, false = POS
   einvoice_required boolean not null default false,                          -- Khách yêu cầu xuất hóa đơn điện tử không?
+  
+  -- Thông tin giao hàng (cho khách Guest không đăng nhập)
+  delivery_name varchar(255),                                                -- Tên người nhận
+  delivery_phone varchar(20),                                                -- Số điện thoại người nhận
+  delivery_address text,                                                     -- Địa chỉ giao hàng
+  notes text,                                                                -- Ghi chú đơn hàng
+  
   created_at timestamp not null default now()                              -- Ngày tạo đơn
 );
 

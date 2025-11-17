@@ -39,4 +39,9 @@ public class ProfileController {
         profileService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/{id}/orders")
+    public ResponseEntity<?> getOrdersByProfileId(@PathVariable UUID id) {
+        return ResponseEntity.ok(profileService.getOrdersByProfileId(id));
+    }
 }

@@ -19,4 +19,7 @@ public class Category {
 
     @Column(columnDefinition = "TEXT")
     private String description;
+
+    @Column(name = "is_active", nullable = false)
+    private Boolean isActive = true;
 }

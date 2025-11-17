@@ -1,7 +1,9 @@
 package com.example.bvtv_www.service;
 
 import com.example.bvtv_www.entity.Profile;
+import com.example.bvtv_www.entity.Order;
 import com.example.bvtv_www.repository.ProfileRepository;
+import com.example.bvtv_www.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -11,6 +13,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ProfileService {
     private final ProfileRepository profileRepository;
+    private final OrderRepository orderRepository;
 
     public List<Profile> findAll() {
         return profileRepository.findAll();
@@ -35,6 +38,14 @@ public class ProfileService {
     }
 
     public void delete(UUID id) {
-        profileRepository.deleteById(id);
+        // Soft delete: set isActive = false
+        Profile existing = findById(id);
+        existing.setIsActive(false);
+        profileRepository.save(existing);
+    }
+
+    public List<Order> getOrdersByProfileId(UUID profileId) {
+        Profile profile = findById(profileId);
+        return orderRepository.findByBuyer(profile);
     }
 }

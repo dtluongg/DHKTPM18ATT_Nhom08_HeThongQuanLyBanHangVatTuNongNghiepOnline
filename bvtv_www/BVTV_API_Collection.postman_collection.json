@@ -1,10 +1,109 @@
 {
     "info": {
         "name": "BVTV WWW API Collection",
-        "description": "Collection for testing BVTV WWW REST APIs - 11 tables full CRUD",
+        "description": "Collection for testing BVTV WWW REST APIs - Full CRUD with Session-based Authentication\n\nĐăng nhập:\n- Email: admin@sauhiep.vn\n- Password: 123\n\nSau khi login, session sẽ được tự động lưu để dùng cho các request khác.",
         "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
     },
     "item": [
+        {
+            "name": "0. Authentication",
+            "item": [
+                {
+                    "name": "Login (Admin)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "// Kiểm tra response status",
+                                    "pm.test(\"Login successful\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "// Lưu thông tin user vào environment",
+                                    "if (pm.response.code === 200) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.environment.set(\"user_email\", jsonData.email);",
+                                    "    pm.environment.set(\"user_role\", jsonData.role);",
+                                    "    pm.environment.set(\"user_id\", jsonData.id);",
+                                    "    console.log(\"✅ Logged in as:\", jsonData.email, \"- Role:\", jsonData.role);",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"admin@sauhiep.vn\",\n  \"password\": \"123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/auth/login",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "auth", "login"]
+                        },
+                        "description": "Đăng nhập với ADMIN account\n- Email: admin@sauhiep.vn\n- Password: 123\n\nSession cookie sẽ được tự động lưu và dùng cho các request khác."
+                    }
+                },
+                {
+                    "name": "Get Current User",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/auth/me",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "auth", "me"]
+                        },
+                        "description": "Lấy thông tin user hiện tại từ session"
+                    }
+                },
+                {
+                    "name": "Logout",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/auth/logout",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "auth", "logout"]
+                        },
+                        "description": "Đăng xuất và xóa session"
+                    }
+                },
+                {
+                    "name": "Register New User",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"123456\",\n  \"name\": \"Test User\",\n  \"phone\": \"0909999999\",\n  \"address\": \"123 Test Street\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/auth/register",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "auth", "register"]
+                        },
+                        "description": "Đăng ký user mới với role CUSTOMER mặc định"
+                    }
+                }
+            ],
+            "description": "Authentication endpoints - Login để lấy session trước khi test các API khác"
+        },
         {
             "name": "1. Areas (Khu vực/Ấp)",
             "item": [
@@ -263,9 +362,9 @@
                         "method": "GET",
                         "header": [],
                         "url": {
-                            "raw": "{{base_url}}/api/products",
+                            "raw": "{{base_url}}/api/product-units",
                             "host": ["{{base_url}}"],
-                            "path": ["api", "products"]
+                            "path": ["api", "product-units"]
                         }
                     }
                 },
@@ -275,9 +374,9 @@
                         "method": "GET",
                         "header": [],
                         "url": {
-                            "raw": "{{base_url}}/api/products/1",
+                            "raw": "{{base_url}}/api/product-units/1",
                             "host": ["{{base_url}}"],
-                            "path": ["api", "products", "1"]
+                            "path": ["api", "product-units", "1"]
                         }
                     }
                 },
@@ -296,9 +395,9 @@
                             "raw": "{\n  \"name\": \"Phân Lân Siêu Lân bao 50kg\",\n  \"shortName\": \"Lân to\",\n  \"brandName\": \"Lâm Thảo\",\n  \"description\": \"Phân lân hàm lượng cao\",\n  \"price\": 380000,\n  \"creditPrice\": 400000,\n  \"vatRate\": 5,\n  \"sku\": \"SLAN-50KG\",\n  \"barcode\": \"LT-SLAN-50\",\n  \"stock\": 0\n}"
                         },
                         "url": {
-                            "raw": "{{base_url}}/api/products",
+                            "raw": "{{base_url}}/api/product-units",
                             "host": ["{{base_url}}"],
-                            "path": ["api", "products"]
+                            "path": ["api", "product-units"]
                         }
                     }
                 },
@@ -317,9 +416,9 @@
                             "raw": "{\n  \"name\": \"Phân Lân Siêu Lân bao 50kg (Updated)\",\n  \"price\": 400000,\n  \"creditPrice\": 420000,\n  \"stock\": 100\n}"
                         },
                         "url": {
-                            "raw": "{{base_url}}/api/products/1",
+                            "raw": "{{base_url}}/api/product-units/1",
                             "host": ["{{base_url}}"],
-                            "path": ["api", "products", "1"]
+                            "path": ["api", "product-units", "1"]
                         }
                     }
                 },
@@ -329,9 +428,9 @@
                         "method": "DELETE",
                         "header": [],
                         "url": {
-                            "raw": "{{base_url}}/api/products/1",
+                            "raw": "{{base_url}}/api/product-units/1",
                             "host": ["{{base_url}}"],
-                            "path": ["api", "products", "1"]
+                            "path": ["api", "product-units", "1"]
                         }
                     }
                 }
@@ -483,6 +582,28 @@
                             "host": ["{{base_url}}"],
                             "path": ["api", "orders"]
                         }
+                    }
+                },
+                {
+                    "name": "Update Order Status",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"status\": \"CONFIRMED\",\n  \"notes\": \"Đã xác nhận đơn hàng\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/orders/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "orders", "1"]
+                        },
+                        "description": "Cập nhật trạng thái và ghi chú đơn hàng (chỉ STAFF/ADMIN)"
                     }
                 }
             ]

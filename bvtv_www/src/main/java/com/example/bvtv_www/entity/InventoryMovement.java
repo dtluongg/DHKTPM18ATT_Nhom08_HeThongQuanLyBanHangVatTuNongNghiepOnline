@@ -22,7 +22,7 @@ public class InventoryMovement {
     private Warehouse warehouse;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "VARCHAR")
     private InventoryMovementType type;
 
     @Column(nullable = false)

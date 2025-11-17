@@ -15,6 +15,10 @@ public class PaymentMethodService {
         return paymentMethodRepository.findAll();
     }
 
+    public List<PaymentMethod> findOnlinePaymentMethods() {
+        return paymentMethodRepository.findByForOnlineAndIsActive(true, true);
+    }
+
     public PaymentMethod findById(Long id) {
         return paymentMethodRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Payment method not found"));

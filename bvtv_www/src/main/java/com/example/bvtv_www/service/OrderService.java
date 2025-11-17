@@ -23,4 +23,14 @@ public class OrderService {
     public Order create(Order order) {
         return orderRepository.save(order);
     }
+
+    public Order update(Long id, Order order) {
+        Order existing = findById(id);
+        // Chỉ cho phép cập nhật trạng thái và ghi chú
+        existing.setStatus(order.getStatus());
+        if (order.getNotes() != null) {
+            existing.setNotes(order.getNotes());
+        }
+        return orderRepository.save(existing);
+    }
 }

@@ -12,7 +12,8 @@ public class AreaService {
     private final AreaRepository areaRepository;
 
     public List<Area> findAll() {
-        return areaRepository.findAll();
+        // Chỉ lấy khu vực isActive = true (chưa xóa mềm)
+        return areaRepository.findByIsActive(true);
     }
 
     public Area findById(Long id) {
@@ -31,6 +32,9 @@ public class AreaService {
     }
 
     public void delete(Long id) {
-        areaRepository.deleteById(id);
+        // Soft delete: set isActive = false
+        Area existing = findById(id);
+        existing.setIsActive(false);
+        areaRepository.save(existing);
     }
 }

@@ -2,6 +2,7 @@ package com.example.bvtv_www.entity;
 
 import com.example.bvtv_www.enums.OrderStatus;
 import com.example.bvtv_www.enums.PaymentTerm;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.math.BigDecimal;
@@ -34,7 +35,7 @@ public class Order {
     private BigDecimal discountTotal = BigDecimal.ZERO;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "VARCHAR")
     private OrderStatus status = OrderStatus.PENDING;
 
     @ManyToOne
@@ -46,7 +47,7 @@ public class Order {
     private Coupon coupon;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "payment_term", nullable = false)
+    @Column(name = "payment_term", nullable = false, columnDefinition = "VARCHAR")
     private PaymentTerm paymentTerm = PaymentTerm.PREPAID;
 
     @Column(name = "is_online", nullable = false)
@@ -55,9 +56,23 @@ public class Order {
     @Column(name = "einvoice_required", nullable = false)
     private Boolean einvoiceRequired = false;
 
+    // Thông tin giao hàng (cho Guest order)
+    @Column(name = "delivery_name")
+    private String deliveryName;
+
+    @Column(name = "delivery_phone", length = 20)
+    private String deliveryPhone;
+
+    @Column(name = "delivery_address", columnDefinition = "TEXT")
+    private String deliveryAddress;
+
+    @Column(columnDefinition = "TEXT")
+    private String notes;
+
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference // Ngăn vòng lặp vô hạn khi serialize JSON
     private List<OrderItem> items = new ArrayList<>();
 }

@@ -1,5 +1,6 @@
 package com.example.bvtv_www.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.math.BigDecimal;
@@ -14,6 +15,7 @@ public class OrderItem {
 
     @ManyToOne
     @JoinColumn(name = "order_id", nullable = false)
+    @JsonBackReference // Không serialize field này để tránh vòng lặp
     private Order order;
 
     @ManyToOne

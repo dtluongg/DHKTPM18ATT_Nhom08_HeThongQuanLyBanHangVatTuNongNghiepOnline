@@ -28,7 +28,7 @@ create table if not exists inventory_movements (
   id bigserial primary key,                                                  -- ID tự tăng
   product_unit_id bigint not null references product_units(id) on delete restrict, -- Sản phẩm xuất/nhập
   warehouse_id bigint not null references warehouses(id) on delete restrict, -- Kho nào
-  type inventory_movement_type not null,                                     -- Loại giao dịch (xem enum ở V1)
+  type varchar(20) not null check (type in ('PURCHASE','SALE','RETURN_IN','RETURN_OUT','ADJUSTMENT_POS','ADJUSTMENT_NEG','TRANSFER_IN','TRANSFER_OUT','CONVERSION_OUT','CONVERSION_IN')), -- Loại giao dịch
   quantity integer not null check (quantity > 0),                            -- Số lượng (luôn dương, tăng/giảm phụ thuộc vào type)
   ref_table varchar,                                                         -- Tham chiếu đến bảng gốc (VD: 'goods_receipt_items', 'order_items')
   ref_id bigint,                                                             -- ID của record trong bảng gốc
@@ -54,11 +54,11 @@ create or replace function apply_product_unit_stock_on_movement_ins()
 returns trigger language plpgsql as $$
 begin
   -- Bỏ qua transfer (chưa dùng trong version này)
-  if NEW.type in ('transfer_in','transfer_out') then
+  if NEW.type in ('TRANSFER_IN','TRANSFER_OUT') then
     return NEW;
   end if;
   -- Các loại GIẢM tồn: xuất bán, trả hàng cho NCC, kiểm kê thiếu, chuyển đổi giảm
-  if NEW.type in ('sale','return_out','adjustment_neg','conversion_out') then
+  if NEW.type in ('SALE','RETURN_OUT','ADJUSTMENT_NEG','CONVERSION_OUT') then
     update product_units set stock = stock - NEW.quantity where id = NEW.product_unit_id;
   -- Các loại TĂNG tồn: nhập hàng, khách trả hàng, kiểm kê thừa, chuyển đổi tăng
   else
@@ -76,8 +76,8 @@ create or replace function apply_product_unit_stock_on_movement_upd()
 returns trigger language plpgsql as $$
 begin
   -- Bước 1: Hoàn nguyên stock theo OLD record (đảo ngược logic)
-  if OLD.type not in ('transfer_in','transfer_out') then
-    if OLD.type in ('sale','return_out','adjustment_neg','conversion_out') then
+  if OLD.type not in ('TRANSFER_IN','TRANSFER_OUT') then
+    if OLD.type in ('SALE','RETURN_OUT','ADJUSTMENT_NEG','CONVERSION_OUT') then
       -- OLD là giảm -> hoàn nguyên = tăng lại
       update product_units set stock = stock + OLD.quantity where id = OLD.product_unit_id;
     else
@@ -86,8 +86,8 @@ begin
     end if;
   end if;
   -- Bước 2: Áp dụng stock theo NEW record
-  if NEW.type not in ('transfer_in','transfer_out') then
-    if NEW.type in ('sale','return_out','adjustment_neg','conversion_out') then
+  if NEW.type not in ('TRANSFER_IN','TRANSFER_OUT') then
+    if NEW.type in ('SALE','RETURN_OUT','ADJUSTMENT_NEG','CONVERSION_OUT') then
       -- NEW là giảm
       update product_units set stock = stock - NEW.quantity where id = NEW.product_unit_id;
     else
@@ -107,11 +107,11 @@ create or replace function apply_product_unit_stock_on_movement_del()
 returns trigger language plpgsql as $$
 begin
   -- Bỏ qua transfer (chưa dùng)
-  if OLD.type in ('transfer_in','transfer_out') then
+  if OLD.type in ('TRANSFER_IN','TRANSFER_OUT') then
     return OLD;
   end if;
   -- OLD là giảm -> hoàn nguyên = tăng lại
-  if OLD.type in ('sale','return_out','adjustment_neg','conversion_out') then
+  if OLD.type in ('SALE','RETURN_OUT','ADJUSTMENT_NEG','CONVERSION_OUT') then
     update product_units set stock = stock + OLD.quantity where id = OLD.product_unit_id;
   -- OLD là tăng -> hoàn nguyên = giảm lại
   else

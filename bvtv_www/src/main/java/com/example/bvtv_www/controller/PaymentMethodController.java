@@ -18,6 +18,11 @@ public class PaymentMethodController {
         return ResponseEntity.ok(paymentMethodService.findAll());
     }
 
+    @GetMapping("/online")
+    public ResponseEntity<List<PaymentMethod>> getOnlinePaymentMethods() {
+        return ResponseEntity.ok(paymentMethodService.findOnlinePaymentMethods());
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<PaymentMethod> getById(@PathVariable Long id) {
         return ResponseEntity.ok(paymentMethodService.findById(id));

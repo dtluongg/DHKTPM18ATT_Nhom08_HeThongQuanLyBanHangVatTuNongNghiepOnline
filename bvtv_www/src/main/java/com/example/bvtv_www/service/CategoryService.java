@@ -12,7 +12,8 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
 
     public List<Category> findAll() {
-        return categoryRepository.findAll();
+        // Chỉ lấy danh mục isActive = true (chưa xóa mềm)
+        return categoryRepository.findByIsActive(true);
     }
 
     public Category findById(Long id) {
@@ -33,6 +34,9 @@ public class CategoryService {
     }
 
     public void delete(Long id) {
-        categoryRepository.deleteById(id);
+        // Soft delete: set isActive = false
+        Category existing = findById(id);
+        existing.setIsActive(false);
+        categoryRepository.save(existing);
     }
 }

@@ -1,8 +1,13 @@
 package com.example.bvtv_www.config;
 
+import com.example.bvtv_www.service.CustomUserDetailsService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -22,122 +27,105 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
+@RequiredArgsConstructor
 public class SecurityConfig {
+    
+    private final CustomUserDetailsService userDetailsService;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+    
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
+    }
+    
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+        return authConfig.getAuthenticationManager();
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable()) // Tắt CSRF cho REST API
+            .cors(cors -> {}) // Enable CORS với config từ CorsConfig.java
+            .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
                 // ============================================================
-                // PUBLIC ENDPOINTS (Guest có thể truy cập)
+                // AUTH ENDPOINTS - Public access
                 // ============================================================
-                // Trang chủ, static resources
-                .requestMatchers("/", "/index.html", "/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/auth/logout").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/auth/status").permitAll()
                 
-                // API công khai - Xem sản phẩm, danh mục
-                .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
+                // ============================================================
+                // GUEST - Public read access (không cần đăng nhập)
+                // ============================================================
+                .requestMatchers(HttpMethod.GET, "/api/product-units/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/payment-methods").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/payment-methods/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/coupons/validate/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/areas").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/store-settings").permitAll()
-                
-                // Tạo đơn hàng (Guest có thể đặt hàng không cần đăng nhập)
-                .requestMatchers(HttpMethod.POST, "/api/orders").permitAll()
-                
-                // Authentication endpoints
-                .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/api/register").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/areas/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/store-settings/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/orders").permitAll() // Guest tạo đơn
                 
                 // ============================================================
-                // CUSTOMER ENDPOINTS (Khách hàng đã đăng nhập)
+                // CUSTOMER - Authenticated users (đã đăng nhập)
                 // ============================================================
-                .requestMatchers(HttpMethod.GET, "/api/orders/my-orders").hasAnyRole("CUSTOMER", "ADMIN", "STAFF")
-                .requestMatchers(HttpMethod.GET, "/api/profiles/me").hasAnyRole("CUSTOMER", "ADMIN", "STAFF")
-                .requestMatchers(HttpMethod.PUT, "/api/profiles/me").hasAnyRole("CUSTOMER", "ADMIN", "STAFF")
+                .requestMatchers(HttpMethod.GET, "/api/auth/me").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/orders/my-orders").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/profiles/me").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/profiles/me").authenticated()
                 
                 // ============================================================
-                // STAFF ENDPOINTS (Nhân viên)
+                // STAFF + ADMIN - Management endpoints
                 // ============================================================
-                // Quản lý đơn hàng
-                .requestMatchers("/api/orders/**").hasAnyRole("STAFF", "ADMIN")
+                // Orders management
+                .requestMatchers(HttpMethod.GET, "/api/orders/**").hasAnyRole("STAFF", "ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/orders/**").hasAnyRole("STAFF", "ADMIN")
                 
-                // Quản lý sản phẩm (xem, thêm, sửa - không xóa)
-                .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/products/**").hasAnyRole("STAFF", "ADMIN")
-                .requestMatchers(HttpMethod.PUT, "/api/products/**").hasAnyRole("STAFF", "ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/api/products/**").hasRole("ADMIN") // Chỉ admin mới xóa
+                // Product management
+                .requestMatchers(HttpMethod.POST, "/api/product-units/**").hasAnyRole("STAFF", "ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/product-units/**").hasAnyRole("STAFF", "ADMIN")
                 
-                // Quản lý danh mục (xem, thêm, sửa - không xóa)
-                .requestMatchers(HttpMethod.POST, "/api/categories").hasAnyRole("STAFF", "ADMIN")
+                // Category management
+                .requestMatchers(HttpMethod.POST, "/api/categories/**").hasAnyRole("STAFF", "ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/categories/**").hasAnyRole("STAFF", "ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/api/categories/**").hasRole("ADMIN")
                 
-                // Quản lý khách hàng
+                // Coupon management
+                .requestMatchers(HttpMethod.POST, "/api/coupons/**").hasAnyRole("STAFF", "ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/coupons/**").hasAnyRole("STAFF", "ADMIN")
+                
+                // Area management
+                .requestMatchers(HttpMethod.POST, "/api/areas/**").hasAnyRole("STAFF", "ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/areas/**").hasAnyRole("STAFF", "ADMIN")
+                
+                // Profile management
                 .requestMatchers(HttpMethod.GET, "/api/profiles").hasAnyRole("STAFF", "ADMIN")
                 .requestMatchers(HttpMethod.POST, "/api/profiles").hasAnyRole("STAFF", "ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/profiles/**").hasAnyRole("STAFF", "ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/api/profiles/**").hasRole("ADMIN")
                 
-                // Quản lý kho hàng (xem, nhập xuất kho)
-                .requestMatchers("/api/inventory-movements/**").hasAnyRole("STAFF", "ADMIN")
-                .requestMatchers(HttpMethod.GET, "/api/warehouses/**").hasAnyRole("STAFF", "ADMIN")
-                
-                // Quản lý mã giảm giá (xem, thêm, sửa)
-                .requestMatchers(HttpMethod.GET, "/api/coupons").hasAnyRole("STAFF", "ADMIN")
-                .requestMatchers(HttpMethod.POST, "/api/coupons").hasAnyRole("STAFF", "ADMIN")
-                .requestMatchers(HttpMethod.PUT, "/api/coupons/**").hasAnyRole("STAFF", "ADMIN")
+                // ============================================================
+                // ADMIN ONLY - Delete operations
+                // ============================================================
+                .requestMatchers(HttpMethod.DELETE, "/api/product-units/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/categories/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/coupons/**").hasRole("ADMIN")
-                
-                // Quản lý khu vực/ấp
-                .requestMatchers(HttpMethod.POST, "/api/areas").hasAnyRole("STAFF", "ADMIN")
-                .requestMatchers(HttpMethod.PUT, "/api/areas/**").hasAnyRole("STAFF", "ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/areas/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/profiles/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/orders/**").hasRole("ADMIN")
                 
-                // ============================================================
-                // ADMIN ONLY ENDPOINTS
-                // ============================================================
-                // Quản lý phương thức thanh toán
-                .requestMatchers(HttpMethod.POST, "/api/payment-methods").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.PUT, "/api/payment-methods/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/api/payment-methods/**").hasRole("ADMIN")
-                
-                // Quản lý kho hàng (tạo, xóa)
-                .requestMatchers(HttpMethod.POST, "/api/warehouses").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.PUT, "/api/warehouses/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/api/warehouses/**").hasRole("ADMIN")
-                
-                // Cấu hình cửa hàng
-                .requestMatchers("/api/store-settings/**").hasRole("ADMIN")
-                
-                // Quản lý user (tạo admin, staff, phân quyền)
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                
-                // ============================================================
-                // Các endpoint còn lại yêu cầu authenticated
-                // ============================================================
+                // Default: require authentication
                 .anyRequest().authenticated()
             )
-            .formLogin(form -> form
-                .loginPage("/login")
-                .loginProcessingUrl("/api/auth/login")
-                .defaultSuccessUrl("/", true)
-                .permitAll()
-            )
-            .logout(logout -> logout
-                .logoutUrl("/api/auth/logout")
-                .logoutSuccessUrl("/")
-                .permitAll()
-            )
-            .httpBasic(basic -> {
-                // Enable HTTP Basic cho REST API testing
-            });
+            .authenticationProvider(authenticationProvider()) // Sử dụng custom UserDetailsService
+            .httpBasic(httpBasic -> httpBasic.disable())
+            .formLogin(formLogin -> formLogin.disable());
         
         return http.build();
     }

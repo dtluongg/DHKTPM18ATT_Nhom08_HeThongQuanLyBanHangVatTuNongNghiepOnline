@@ -16,7 +16,7 @@ interface PaymentMethod {
 
 export default function CheckoutPage() {
     const router = useRouter();
-    const { items, getTotalPrice } = useCartStore();
+    const { items, getTotalPrice, clearCart } = useCartStore();
     const { user } = useAuthStore();
     const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
     const [error, setError] = useState("");
@@ -31,12 +31,20 @@ export default function CheckoutPage() {
 
     const fetchPaymentMethods = async () => {
         try {
-            const response = await api.get("/payment-methods/online");
+            // Fetch ALL payment methods (online + offline).
+            // Previously we called `/payment-methods/online` which returned only online methods,
+            // causing the default selection to be an online method -> `isOnline=true` and
+            // `paymentTerm=PREPAID` when creating orders. That made COD orders saved incorrectly.
+            const response = await api.get("/payment-methods");
             setPaymentMethods(response.data);
+
             if (response.data.length > 0) {
+                // Prefer an offline/COD method as default when available
+                const offline = response.data.find((m: any) => m.forOnline === false);
+                const defaultMethod = offline || response.data[0];
                 setFormData((prev) => ({
                     ...prev,
-                    paymentMethodId: response.data[0].id.toString(),
+                    paymentMethodId: defaultMethod.id.toString(),
                 }));
             }
         } catch (error) {
@@ -63,11 +71,66 @@ export default function CheckoutPage() {
         });
     };
 
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // TODO: Logic đặt hàng sẽ được implement sau
-        console.log("Form data:", formData);
-        console.log("Cart items:", items);
+        setError("");
+        setIsSubmitting(true);
+        try {
+            const method = paymentMethods.find(
+                (m) => m.id === Number(formData.paymentMethodId)
+            );
+
+            // generate a client-side orderNo (backend currently requires unique orderNo)
+            const orderNo = `ORD-${new Date()
+                .toISOString()
+                .replace(/[:.]/g, "")}-${Math.floor(Math.random() * 900) + 100}`;
+
+            const itemsPayload = items.map((i) => ({
+                productUnit: { id: i.productUnit.id },
+                quantity: i.quantity,
+                price: i.productUnit.price,
+                discountAmount: 0,
+                vatRate: 0,
+                vatAmount: 0,
+            }));
+
+            const totalAmount = getTotalPrice();
+
+            const payload = {
+                orderNo,
+                deliveryName: formData.deliveryName,
+                deliveryPhone: formData.deliveryPhone,
+                deliveryAddress: formData.deliveryAddress,
+                notes: formData.notes,
+                totalAmount,
+                totalVat: 0,
+                discountTotal: 0,
+                paymentMethod: { id: Number(formData.paymentMethodId) },
+                paymentTerm: method?.forOnline ? "PREPAID" : "COD",
+                isOnline: !!method?.forOnline,
+                items: itemsPayload,
+            };
+
+            const resp = await api.post("/orders", payload);
+            const created = resp.data;
+
+            // store created order in sessionStorage so success page can render full invoice
+            try {
+                sessionStorage.setItem("lastOrder", JSON.stringify(created));
+            } catch (e) {
+                console.warn("Cannot write lastOrder to sessionStorage", e);
+            }
+
+            // redirect to invoice/success page
+            router.push(`/checkout/success`);
+        } catch (err) {
+            console.error("Create order error:", err);
+            setError("Không thể tạo đơn hàng. Vui lòng thử lại.");
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     const formatCurrency = (amount: number) => {

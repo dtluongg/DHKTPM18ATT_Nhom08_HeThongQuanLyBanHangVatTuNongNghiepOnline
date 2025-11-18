@@ -108,8 +108,8 @@
 				<version>11.7.2</version>
 				<configuration>
 					<url>jdbc:postgresql://aws-1-ap-southeast-1.pooler.supabase.com:5432/postgres?sslmode=require</url>
-					<user>postgres.znzhkmbiksyesimuwysr</user>
-					<password>Huy0522714563</password>
+					<user>postgres.yyhsnrbqjysyctrnhvlx</user>
+					<password>Luongxmen1402$</password>
 					<driver>org.postgresql.Driver</driver>
 					<locations>
 						<location>classpath:db/migration</location>
@@ -123,7 +123,6 @@
 					<dependency>
 						<groupId>org.postgresql</groupId>
 						<artifactId>postgresql</artifactId>
-						<version>42.6.0</version>
 					</dependency>
 				</dependencies>
 			</plugin>

@@ -35,13 +35,13 @@ export default function CheckoutPage() {
             // Previously we called `/payment-methods/online` which returned only online methods,
             // causing the default selection to be an online method -> `isOnline=true` and
             // `paymentTerm=PREPAID` when creating orders. That made COD orders saved incorrectly.
-            const response = await api.get("/payment-methods");
+            const response = await api.get("/payment-methods/online");
             setPaymentMethods(response.data);
 
             if (response.data.length > 0) {
                 // Prefer an offline/COD method as default when available
                 const offline = response.data.find((m: any) => m.forOnline === false);
-                const defaultMethod = offline || response.data[0];
+                const defaultMethod = response.data[0];
                 setFormData((prev) => ({
                     ...prev,
                     paymentMethodId: defaultMethod.id.toString(),
@@ -83,9 +83,7 @@ export default function CheckoutPage() {
             );
 
             // generate a client-side orderNo (backend currently requires unique orderNo)
-            const orderNo = `ORD-${new Date()
-                .toISOString()
-                .replace(/[:.]/g, "")}-${Math.floor(Math.random() * 900) + 100}`;
+            const orderNo = "";
 
             const itemsPayload = items.map((i) => ({
                 productUnit: { id: i.productUnit.id },
@@ -99,7 +97,6 @@ export default function CheckoutPage() {
             const totalAmount = getTotalPrice();
 
             const payload = {
-                orderNo,
                 deliveryName: formData.deliveryName,
                 deliveryPhone: formData.deliveryPhone,
                 deliveryAddress: formData.deliveryAddress,

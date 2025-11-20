@@ -31,4 +31,6 @@ public interface ProfileRepository extends JpaRepository<Profile, UUID> {
      * Kiểm tra email đã tồn tại chưa
      */
     boolean existsByEmail(String email);
+
+    Optional<Profile> findByPhone(String phoneNumber);
 }

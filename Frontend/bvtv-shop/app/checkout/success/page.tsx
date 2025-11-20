@@ -24,7 +24,7 @@ type Order = {
     totalAmount?: number;
     totalVat?: number;
     discountTotal?: number;
-    paymentMethod?: { id?: number; name?: string } | number;
+    paymentMethod?: { id?: number; name?: string };
     paymentTerm?: string;
     isOnline?: boolean;
     status?: string;
@@ -106,7 +106,7 @@ export default function CheckoutSuccessPage() {
                         </div>
                         <div className="text-right">
                             <div className="text-sm text-gray-600">Trạng thái</div>
-                            <div className="font-semibold text-green-700">{order.status || 'PENDING'}</div>
+                            <div className="font-semibold text-green-700">{order.status}</div>
                         </div>
                     </div>
 
@@ -119,7 +119,7 @@ export default function CheckoutSuccessPage() {
                         </div>
                         <div>
                             <div className="text-sm text-gray-600">Phương thức thanh toán</div>
-                            <div className="font-semibold">{paymentName || (order.isOnline ? 'Online' : 'COD')}</div>
+                            <div className="font-semibold">{paymentName}</div>
                             <div className="text-sm text-gray-600 mt-2">Ghi chú: {order.notes || '-'}</div>
                         </div>
                     </div>

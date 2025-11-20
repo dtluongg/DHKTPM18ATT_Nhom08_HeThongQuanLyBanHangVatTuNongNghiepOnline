@@ -5,3 +5,22 @@ file: globals.css
 -> color mặc định bị lỗi khi ở giao diện dark. (không thấy nội dung)
 -> cập nhật thêm để theme dark hay light ở pc của user cũng ko ảnh hưởng tới giao diện.
 detail: chỉnh globals.css để bỏ block @media (prefers-color-scheme: dark) và ép giao diện giữ theo light-mode (đặt color-scheme: light + biến placeholder và đảm bảo input kế thừa màu chữ). Điều này làm cho hệ thống dark/light không ảnh hưởng tới màu chữ/placeholder nữa.
+
+
+-- 20/11
+file: 
+-- Backend:
+1. entity/Order.java
+- Xoá null cho orderNo
+2. profileRepository
+- thêm Optional<Profile> findByPhone(String phoneNumber);
+3. profileService
+- thêm public Profile findbyPhoneNumber(String phone): đề phòng sau này cần đến findByPhone. 
+4. orderService
+- Thêm Transaction, EnityManager và Authentication
++ Transaction + EnityManager dùng để refesh và trả về kết quả mới từ database. 
++ Authentication dùng để chứng thực auto thêm thông tin người dùng khi thanh toán nếu đã đăng nhập.
+
+-- Frontend:
+1. Hiện thành công chỉ 2 phương thức thanh toán qua trang web.
+2. page checkout and success -> hiển thị thành công thông tin sau khi thanh toán.

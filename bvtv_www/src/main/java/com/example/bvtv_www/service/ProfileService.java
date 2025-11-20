@@ -29,6 +29,11 @@ public class ProfileService {
             .orElseThrow(() -> new RuntimeException("Profile not found with email: " + email));
     }
 
+    public Profile findbyPhoneNumber(String phone) {
+        return profileRepository.findByPhone(phone)
+            .orElseThrow(() -> new RuntimeException("Profile not found with phone number: " + phone));
+    }
+
     public Profile create(Profile profile) {
         return profileRepository.save(profile);
     }

@@ -18,7 +18,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "order_no", nullable = false, unique = true, length = 30)
+    @Column(name = "order_no", unique = true, length = 30)
     private String orderNo;
 
     @ManyToOne

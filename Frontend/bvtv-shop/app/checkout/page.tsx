@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import api from "@/lib/api";
+import { getVietQRImageUrl } from "./checkQR/generateQR";
 import { useCartStore } from "@/store/cart-store";
 import { useAuthStore } from "@/store/auth-store";
 
@@ -130,6 +131,21 @@ export default function CheckoutPage() {
         }
     };
 
+    const selectedMethod = paymentMethods.find(
+        (m) => m.id === Number(formData.paymentMethodId)
+    );
+
+    // Build QR url when selected method appears to be bank transfer
+    const isBankTransfer = (m?: PaymentMethod) => {
+        if (!m) return false;
+        const name = (m.name || '').toLowerCase();
+        return name.includes('chuyển khoản') || name.includes('chuyen') && name.includes('khoan') || name.includes('bank') || name.includes('chuyenkhoan');
+    };
+
+    const qrUrl = isBankTransfer(selectedMethod)
+        ? getVietQRImageUrl({ amount: getTotalPrice(), addInfo: formData.notes || 'Thanh toan' })
+        : null;
+
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat("vi-VN", {
             style: "currency",
@@ -252,6 +268,21 @@ export default function CheckoutPage() {
                                     </select>
                                 </div>
 
+                                {/* If customer chose bank transfer, show QR image */}
+                                {qrUrl && (
+                                    <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded">
+                                        <div className="text-sm text-gray-700 mb-2 font-semibold">Quét mã QR để chuyển khoản</div>
+                                        <div className="flex items-center gap-4">
+                                            <img src={qrUrl} alt="QR chuyển khoản" className="w-40 h-40 object-contain rounded" />
+                                            <div className="text-sm text-gray-700">
+                                                <div><strong>Số tiền:</strong> {formatCurrency(getTotalPrice())}</div>
+                                                <div className="mt-2"><strong>Nội dung:</strong> {formData.notes || 'Thanh toan'}</div>
+                                                <div className="mt-2 text-xs text-gray-500">Nếu muốn, bạn có thể chụp màn hình mã QR và dùng ứng dụng ngân hàng để quét.</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
                                 <div>
                                     <label
                                         htmlFor="notes"
@@ -275,7 +306,7 @@ export default function CheckoutPage() {
                                         type="submit"
                                         className="flex-1 bg-green-600 text-white py-3 px-4 rounded-md font-semibold hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
                                     >
-                                        Đặt hàng
+                                        Xác nhận đặt hàng
                                     </button>
                                     <Link
                                         href="/cart"

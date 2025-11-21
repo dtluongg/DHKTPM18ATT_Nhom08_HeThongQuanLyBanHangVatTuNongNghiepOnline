@@ -130,7 +130,6 @@ export default function BankTransferModal({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
-  // ✅ Bây giờ mới được return theo `open`
   if (!open) return null;
 
   return (

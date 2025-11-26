@@ -15,8 +15,9 @@ async function getTransactions(apiUrl, apiKey) {
 export async function fetchTransactionsFromEnv() {
   // Client-side code can only access env vars that start with NEXT_PUBLIC_
   // For local testing, set `NEXT_PUBLIC_API_GET_TRANSACTION` and `NEXT_PUBLIC_API_CHECK_BANK` (or NEXT_PUBLIC_CASSO_API_KEY)
-  const apiUrl = process.env.NEXT_PUBLIC_API_GET_TRANSACTION;
-  const apiKey = process.env.NEXT_PUBLIC_CASSO_API_KEY;
+  const parameter="?sort=DESC";
+  const apiUrl = process.env.NEXT_PUBLIC_API_GET_TRANSACTION + parameter;
+  const apiKey = process.env.NEXT_PUBLIC_API_CHECK_BANK;
 
   if (!apiUrl) {
     console.warn('API_GET_TRANSACTION not set in env (set NEXT_PUBLIC_API_GET_TRANSACTION for client-side testing)');

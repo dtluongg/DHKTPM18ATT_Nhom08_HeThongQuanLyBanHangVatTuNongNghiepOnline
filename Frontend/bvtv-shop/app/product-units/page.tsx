@@ -76,6 +76,12 @@ export default function ProductsPage() {
                         </h1>
                         <div className="flex gap-4">
                             <Link
+                                href="/order-lookup"
+                                className="px-4 py-2 border border-green-600 text-green-600 rounded-lg hover:bg-green-50"
+                            >
+                                🔎 Tra cứu đơn hàng
+                            </Link>
+                            <Link
                                 href="/cart"
                                 className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
                             >
@@ -96,7 +102,7 @@ export default function ProductsPage() {
                                         href="/dashboard"
                                         className="px-4 py-2 border border-green-600 text-green-600 rounded-lg hover:bg-green-50"
                                     >
-                                        👤 {user.fullName}
+                                        👤 {user.sortName}
                                     </Link>
                                 </>
                             ) : (

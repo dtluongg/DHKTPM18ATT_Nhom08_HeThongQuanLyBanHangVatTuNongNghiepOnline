@@ -67,10 +67,10 @@ export default function BankTransferModal({
         const records = res?.data?.records;
         if (Array.isArray(records) && records.length > 0) {
           // có thể cải tiến để find trong cả mảng, tạm thời giữ logic cũ
-          const last = records[records.length - 1];
-          const recAmount = Math.round(Number(last.amount || 0));
+          const first = records[0];
+          const recAmount = Math.round(Number(first.amount || 0));
           const expected = Math.round(Number(amount || 0));
-          const desc = (last.description || "").toString().toLowerCase();
+          const desc = (first.description || "").toString().toLowerCase();
           const fullNote = (description || "").toString().toLowerCase();
           const getPaymentCode = fullNote.split(" ")[0].toLowerCase();
           const amountMatches = recAmount === expected;
@@ -105,8 +105,8 @@ export default function BankTransferModal({
 
     // check ngay lần đầu
     checkOnce();
-    // sau đó 30s check 1 lần
-    intervalRef.current = window.setInterval(checkOnce, 30 * 1000);
+    // sau đó 15s check 1 lần
+    intervalRef.current = window.setInterval(checkOnce, 15 * 1000);
     // timeout 2 phút
     timeoutRef.current = window.setTimeout(() => {
       setStatus((prev) => (prev === "success" ? "success" : "failed"));

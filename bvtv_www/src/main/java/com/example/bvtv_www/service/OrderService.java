@@ -27,6 +27,11 @@ public class OrderService {
             .orElseThrow(() -> new RuntimeException("Order not found"));
     }
 
+    public Order findByOrderNo(String orderNo) {
+        return orderRepository.findByOrderNo(orderNo)
+            .orElseThrow(() -> new RuntimeException("Order not found"));
+    }
+
     @Transactional
     public Order create(Order order) {
         // If user is authenticated, attach the buyer (Profile) automatically

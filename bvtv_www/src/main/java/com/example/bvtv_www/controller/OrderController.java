@@ -28,6 +28,11 @@ public class OrderController {
         return ResponseEntity.ok(orderService.findById(id));
     }
 
+    @GetMapping("/lookup/{orderNo}")
+    public ResponseEntity<Order> getByOrderNo(@PathVariable String orderNo) {
+        return ResponseEntity.ok(orderService.findByOrderNo(orderNo));
+    }
+
     @PostMapping
     public ResponseEntity<Order> create(@RequestBody Order order) {
         return ResponseEntity.ok(orderService.create(order));

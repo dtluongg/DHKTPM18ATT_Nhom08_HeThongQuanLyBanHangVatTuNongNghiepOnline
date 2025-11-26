@@ -72,6 +72,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/coupons/validate/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/areas/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/store-settings/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/orders/lookup/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/orders").permitAll() // Guest tạo đơn
                 
                 // ============================================================

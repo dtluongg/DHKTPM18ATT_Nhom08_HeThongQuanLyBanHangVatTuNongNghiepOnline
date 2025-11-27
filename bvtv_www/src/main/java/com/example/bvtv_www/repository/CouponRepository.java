@@ -8,4 +8,5 @@ import java.util.List;
 @Repository
 public interface CouponRepository extends JpaRepository<Coupon, Long> {
     List<Coupon> findByIsActive(Boolean isActive);
+    java.util.Optional<Coupon> findByCodeIgnoreCase(String code);
 }

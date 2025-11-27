@@ -24,4 +24,20 @@ public class CouponService {
     public Coupon create(Coupon coupon) {
         return couponRepository.save(coupon);
     }
+
+    public java.util.Optional<Coupon> findByCode(String code) {
+        return couponRepository.findByCodeIgnoreCase(code);
+    }
+
+    public Coupon findByIdOrThrow(Long id) {
+        return couponRepository.findById(id).orElseThrow(() -> new RuntimeException("Coupon not found"));
+    }
+
+    public Coupon decrementUsageIfLimited(Coupon coupon) {
+        if (coupon.getUsageLimit() != null && coupon.getUsageLimit() > 0) {
+            coupon.setUsageLimit(coupon.getUsageLimit() - 1);
+            return couponRepository.save(coupon);
+        }
+        return coupon;
+    }
 }

@@ -24,6 +24,7 @@ type Order = {
     totalAmount?: number;
     totalVat?: number;
     discountTotal?: number;
+    totalPay?: number;
     paymentMethod?: { id?: number; name?: string };
     paymentTerm?: string;
     isOnline?: boolean;
@@ -158,9 +159,13 @@ export default function CheckoutSuccessPage() {
                                 <span>Phí vận chuyển</span>
                                 <span className="text-green-600">Miễn phí</span>
                             </div>
+                            <div className="flex justify-between text-gray-600">
+                                <span>Giảm</span>
+                                <span className="text-green-600">{formatCurrency(order.discountTotal)}</span>
+                            </div>
                             <div className="flex justify-between text-lg font-bold pt-2 border-t">
                                 <span>Tổng cộng</span>
-                                <span className="text-green-600">{formatCurrency(order.totalAmount)}</span>
+                                <span className="text-green-600">{formatCurrency(order.totalPay ?? order.totalAmount)}</span>
                             </div>
                         </div>
                     </div>

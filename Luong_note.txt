@@ -24,3 +24,8 @@ file:
 -- Frontend:
 1. Hiện thành công chỉ 2 phương thức thanh toán qua trang web.
 2. page checkout and success -> hiển thị thành công thông tin sau khi thanh toán.
+
+
+-- 27/11/2025
+1. cần cập nhật thêm tính năng gửi mã đơn hàng về sđt or email
+2. cập nhật thêm áp mã giảm giá cho tổng đơn hàng. 

@@ -34,6 +34,9 @@ public class Order {
     @Column(name = "discount_total", nullable = false)
     private BigDecimal discountTotal = BigDecimal.ZERO;
 
+    @Column(name = "total_pay", nullable = false)
+    private BigDecimal totalPay = BigDecimal.ZERO;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, columnDefinition = "VARCHAR")
     private OrderStatus status = OrderStatus.PENDING;

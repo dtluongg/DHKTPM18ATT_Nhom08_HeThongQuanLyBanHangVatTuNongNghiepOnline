@@ -31,6 +31,12 @@ export default function CheckoutPage() {
     notes: "",
   });
 
+  // Coupon state
+  const [couponCode, setCouponCode] = useState("");
+  const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
+  const [appliedCoupon, setAppliedCoupon] = useState<any | null>(null);
+  const [couponError, setCouponError] = useState("");
+
   function generatePaymentCode() {
     const ts = Date.now().toString(36).toUpperCase(); // dựa trên thời gian
     const rand = Math.random().toString(36).slice(2, 6).toUpperCase(); // 4 ký tự random
@@ -87,6 +93,34 @@ export default function CheckoutPage() {
     });
   };
 
+  const handleCouponChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCouponCode(e.target.value.toUpperCase().trim());
+    setCouponError("");
+  };
+
+  const applyCoupon = async () => {
+    if (!couponCode) return;
+    setIsApplyingCoupon(true);
+    setCouponError("");
+    try {
+      const amount = getTotalPrice();
+      const resp = await api.get(`/coupons/validate/${encodeURIComponent(couponCode)}?amount=${amount}`);
+      const data = resp.data;
+      if (data && data.valid) {
+        setAppliedCoupon(data);
+      } else {
+        setAppliedCoupon(null);
+        setCouponError(data?.message || "Mã giảm giá không hợp lệ");
+      }
+    } catch (err) {
+      console.error("Apply coupon error:", err);
+      setCouponError("Lỗi khi kiểm tra mã giảm giá");
+      setAppliedCoupon(null);
+    } finally {
+      setIsApplyingCoupon(false);
+    }
+  };
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showBankPaymentModal, setShowBankPaymentModal] = useState(false);
   const [isCreatingOrder, setIsCreatingOrder] = useState(false);
@@ -119,7 +153,8 @@ export default function CheckoutPage() {
         notes: formData.notes,
         totalAmount,
         totalVat: 0,
-        discountTotal: 0,
+        discountTotal: appliedCoupon?.discountAmount || 0,
+        coupon: appliedCoupon?.coupon ? { id: appliedCoupon.coupon.id } : undefined,
         paymentMethod: { id: Number(formData.paymentMethodId) },
         paymentTerm: method?.forOnline ? "PREPAID" : "COD",
         isOnline: !!method?.forOnline,
@@ -131,10 +166,7 @@ export default function CheckoutPage() {
         setShowBankPaymentModal(true);
         // keep payload in sessionStorage temporarily so creation step can reuse it if needed
         try {
-          sessionStorage.setItem(
-            "pendingOrderPayload",
-            JSON.stringify(payload)
-          );
+          sessionStorage.setItem("pendingOrderPayload", JSON.stringify(payload));
         } catch (e) {
           console.warn("Cannot write pendingOrderPayload to sessionStorage", e);
         }
@@ -196,7 +228,8 @@ export default function CheckoutPage() {
           notes: formData.notes,
           totalAmount: getTotalPrice(),
           totalVat: 0,
-          discountTotal: 0,
+          discountTotal: appliedCoupon?.discountAmount || 0,
+          coupon: appliedCoupon?.coupon ? { id: appliedCoupon.coupon.id } : undefined,
           paymentMethod: { id: Number(formData.paymentMethodId) },
           paymentTerm: method?.forOnline ? "PREPAID" : "COD",
           isOnline: !!method?.forOnline,
@@ -388,6 +421,43 @@ export default function CheckoutPage() {
                   />
                 </div>
 
+                {/* Coupon */}
+                <div>
+                  <label htmlFor="coupon" className="block text-sm font-medium text-gray-700 mb-1">
+                    Mã giảm giá
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      id="coupon"
+                      name="coupon"
+                      value={couponCode}
+                      onChange={handleCouponChange}
+                      placeholder="Nhập mã giảm giá"
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                    />
+                    <button
+                      type="button"
+                      onClick={applyCoupon}
+                      disabled={isApplyingCoupon}
+                      className="px-4 py-2 bg-green-600 text-white rounded-md disabled:opacity-50"
+                    >
+                      Áp dụng
+                    </button>
+                  </div>
+                  {couponError && <div className="mt-2 text-sm text-red-600">{couponError}</div>}
+                  {appliedCoupon && (
+                    <div className="mt-2 text-sm text-green-700">
+                      Đã áp dụng: {appliedCoupon.coupon.code} — {
+                        appliedCoupon.coupon.discountType === 'percent' ? (
+                          <>{appliedCoupon.coupon.discountValue}% — Giảm {formatCurrency(Number(appliedCoupon.discountAmount || 0))}</>
+                        ) : (
+                          <>Giảm {formatCurrency(Number(appliedCoupon.discountAmount || 0))}</>
+                        )
+                      }
+                    </div>
+                  )}
+                </div>
+
                 <div className="flex gap-4 pt-4">
                   <button
                     type="submit"
@@ -439,10 +509,14 @@ export default function CheckoutPage() {
                   <span>Phí vận chuyển:</span>
                   <span className="text-green-600">Miễn phí</span>
                 </div>
+                <div className="flex justify-between text-gray-600">
+                  <span>Giảm:</span>
+                  <span className="text-green-600">{formatCurrency(Number(appliedCoupon?.discountAmount || 0))}</span>
+                </div>
                 <div className="flex justify-between text-lg font-bold text-gray-800 pt-2 border-t">
                   <span>Tổng cộng:</span>
                   <span className="text-green-600">
-                    {formatCurrency(getTotalPrice())}
+                    {formatCurrency(getTotalPrice() - Number(appliedCoupon?.discountAmount || 0))}
                   </span>
                 </div>
               </div>

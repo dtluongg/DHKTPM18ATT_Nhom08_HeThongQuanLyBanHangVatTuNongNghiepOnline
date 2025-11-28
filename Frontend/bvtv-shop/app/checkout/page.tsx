@@ -285,6 +285,9 @@ export default function CheckoutPage() {
 
   const transferDescription = buildDescription();
 
+  // Tổng phải trả sau khi áp mã giảm (dùng cho QR chuyển khoản)
+  const payableAmount = getTotalPrice() - Number(appliedCoupon?.discountAmount || 0);
+
   // NOTE: QR generation / display moved to the success page after order creation
 
   const formatCurrency = (amount: number) => {
@@ -540,7 +543,7 @@ export default function CheckoutPage() {
         }}
         onConfirm={createOrderFromPending}
         onViewDetails={viewOrderDetails}
-        amount={getTotalPrice()}
+        amount={payableAmount}
         description={transferDescription}
         isCreating={isCreatingOrder}
         bankName={process.env.NEXT_PUBLIC_BANK_NAME || ""}

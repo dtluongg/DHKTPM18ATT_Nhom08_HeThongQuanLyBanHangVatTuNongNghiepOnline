@@ -4,7 +4,8 @@ import { CartItem, ProductUnit } from "@/types";
 
 interface CartStore {
     items: CartItem[];
-    addItem: (product: ProductUnit, quantity?: number) => void;
+    // returns { action: 'added'|'updated', quantity } so callers can show notifications
+    addItem: (product: ProductUnit, quantity?: number) => { action: 'added' | 'updated'; quantity: number };
     removeItem: (productId: number) => void;
     updateQuantity: (productId: number, quantity: number) => void;
     clearCart: () => void;
@@ -25,21 +26,24 @@ export const useCartStore = create<CartStore>()(
 
                 if (existingItem) {
                     // Tăng số lượng nếu đã có trong giỏ
+                    const newQty = existingItem.quantity + quantity;
                     set({
                         items: items.map((item) =>
                             item.productUnit.id === product.id
                                 ? {
                                       ...item,
-                                      quantity: item.quantity + quantity,
+                                      quantity: newQty,
                                   }
                                 : item
                         ),
                     });
+                    return { action: 'updated', quantity: newQty } as const;
                 } else {
                     // Thêm mới vào giỏ
                     set({
                         items: [...items, { productUnit: product, quantity }],
                     });
+                    return { action: 'added', quantity } as const;
                 }
             },
 

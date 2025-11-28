@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import api from "@/lib/api";
 import { ProductUnit } from "@/types";
@@ -14,6 +15,8 @@ export default function ProductsPage() {
     const [selectedCategory, setSelectedCategory] = useState<string>("all");
     const [searchQuery, setSearchQuery] = useState("");
     const { addItem } = useCartStore();
+    const [notify, setNotify] = useState<{ text: string } | null>(null);
+    const Toast = dynamic(() => import("@/components/Toast"), { ssr: false });
     const { user } = useAuthStore();
 
     useEffect(() => {
@@ -55,7 +58,12 @@ export default function ProductsPage() {
     });
 
     const handleAddToCart = (product: ProductUnit) => {
-        addItem(product, 1);
+        const res = addItem(product, 1);
+        if (res.action === "added") {
+            setNotify({ text: `Đã thêm “${product.name}” vào giỏ hàng` });
+        } else {
+            setNotify({ text: `Cập nhật số lượng “${product.name}”: ${res.quantity}` });
+        }
     };
 
     const formatCurrency = (amount: number) => {
@@ -119,6 +127,14 @@ export default function ProductsPage() {
             </div>
 
             <div className="container mx-auto px-4 py-8">
+                {/* Notification toast */}
+                {notify && (
+                    <Toast
+                        message={notify.text}
+                        duration={2200}
+                        onClose={() => setNotify(null)}
+                    />
+                )}
                 {/* Filters */}
                 <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

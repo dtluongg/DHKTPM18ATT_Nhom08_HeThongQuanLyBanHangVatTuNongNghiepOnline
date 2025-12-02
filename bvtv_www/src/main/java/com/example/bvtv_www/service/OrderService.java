@@ -3,7 +3,6 @@ package com.example.bvtv_www.service;
 import com.example.bvtv_www.entity.Order;
 import com.example.bvtv_www.entity.Profile;
 import com.example.bvtv_www.repository.OrderRepository;
-import com.example.bvtv_www.service.CouponService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,12 +25,12 @@ public class OrderService {
 
     public Order findById(Long id) {
         return orderRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Order not found"));
+                .orElseThrow(() -> new RuntimeException("Order not found"));
     }
 
     public Order findByOrderNo(String orderNo) {
         return orderRepository.findByOrderNo(orderNo)
-            .orElseThrow(() -> new RuntimeException("Order not found"));
+                .orElseThrow(() -> new RuntimeException("Order not found"));
     }
 
     @Transactional
@@ -40,7 +39,7 @@ public class OrderService {
         // so frontend doesn't need to provide buyer info when logged in.
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated() &&
-            !"anonymousUser".equals(authentication.getPrincipal())) {
+                !"anonymousUser".equals(authentication.getPrincipal())) {
             String email = authentication.getName();
             try {
                 Profile buyer = profileService.findByEmail(email);
@@ -74,7 +73,8 @@ public class OrderService {
                 java.math.BigDecimal discount = java.math.BigDecimal.ZERO;
                 if (order.getTotalAmount() != null && coupon.getDiscountValue() != null) {
                     if ("percent".equalsIgnoreCase(coupon.getDiscountType())) {
-                        discount = order.getTotalAmount().multiply(coupon.getDiscountValue()).divide(new java.math.BigDecimal(100));
+                        discount = order.getTotalAmount().multiply(coupon.getDiscountValue())
+                                .divide(new java.math.BigDecimal(100));
                     } else { // fixed
                         discount = coupon.getDiscountValue();
                     }
@@ -88,8 +88,10 @@ public class OrderService {
                 order.setCoupon(coupon);
                 // compute totalPay = totalAmount - discount
                 try {
-                    java.math.BigDecimal total = order.getTotalAmount() != null ? order.getTotalAmount() : java.math.BigDecimal.ZERO;
-                    java.math.BigDecimal disc = order.getDiscountTotal() != null ? order.getDiscountTotal() : java.math.BigDecimal.ZERO;
+                    java.math.BigDecimal total = order.getTotalAmount() != null ? order.getTotalAmount()
+                            : java.math.BigDecimal.ZERO;
+                    java.math.BigDecimal disc = order.getDiscountTotal() != null ? order.getDiscountTotal()
+                            : java.math.BigDecimal.ZERO;
                     order.setTotalPay(total.subtract(disc));
                 } catch (Exception ex) {
                     order.setTotalPay(order.getTotalAmount());
@@ -105,8 +107,10 @@ public class OrderService {
         }
         if (order.getTotalPay() == null) {
             try {
-                java.math.BigDecimal total = order.getTotalAmount() != null ? order.getTotalAmount() : java.math.BigDecimal.ZERO;
-                java.math.BigDecimal disc = order.getDiscountTotal() != null ? order.getDiscountTotal() : java.math.BigDecimal.ZERO;
+                java.math.BigDecimal total = order.getTotalAmount() != null ? order.getTotalAmount()
+                        : java.math.BigDecimal.ZERO;
+                java.math.BigDecimal disc = order.getDiscountTotal() != null ? order.getDiscountTotal()
+                        : java.math.BigDecimal.ZERO;
                 order.setTotalPay(total.subtract(disc));
             } catch (Exception ex) {
                 order.setTotalPay(order.getTotalAmount());
@@ -147,7 +151,7 @@ public class OrderService {
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new RuntimeException("User not authenticated");
         }
-        
+
         String email = authentication.getName(); // email of the user
         Profile buyer = profileService.findByEmail(email);
         return orderRepository.findByBuyer(buyer);

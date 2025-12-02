@@ -19,9 +19,6 @@ public class ChatController {
     @PostMapping
     public ResponseEntity<Map<String, String>> chat(@RequestBody Map<String, Object> payload) {
         try {
-            // Payload expected: { "messages": [ { "role": "user", "content": "..." } ] }
-            // We extract the last user message
-            
             String userMessage = "";
             if (payload.containsKey("messages")) {
                 List<Map<String, String>> messages = (List<Map<String, String>>) payload.get("messages");
@@ -32,9 +29,9 @@ public class ChatController {
             }
 
             if (userMessage == null || userMessage.isEmpty()) {
-                 Map<String, String> error = new HashMap<>();
-                 error.put("content", "Vui lòng nhập nội dung tin nhắn.");
-                 return ResponseEntity.badRequest().body(error);
+                Map<String, String> error = new HashMap<>();
+                error.put("content", "Vui lòng nhập nội dung tin nhắn.");
+                return ResponseEntity.badRequest().body(error);
             }
 
             String aiResponse = geminiService.getChatResponse(userMessage);

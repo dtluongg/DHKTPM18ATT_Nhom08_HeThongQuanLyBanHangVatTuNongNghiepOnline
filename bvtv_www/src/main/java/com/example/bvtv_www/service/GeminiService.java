@@ -17,7 +17,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class GeminiService {
@@ -34,8 +33,10 @@ public class GeminiService {
     private final RestTemplate restTemplate = new RestTemplate();
     private static final String GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=";
 
-    private static final String BASE_SYSTEM_PROMPT = "Bạn là trợ lý AI của \"Đại Lý Sáu Hiệp\" - một cửa hàng chuyên bán vật tư nông nghiệp (thuốc bảo vệ thực vật, phân bón, hạt giống...).\n" +
-            "Nhiệm vụ của bạn là hỗ trợ khách hàng trả lời các câu hỏi về sản phẩm, cách sử dụng, và thông tin cửa hàng.\n" +
+    private static final String BASE_SYSTEM_PROMPT = "Bạn là trợ lý AI của \"Đại Lý Sáu Hiệp\" - một cửa hàng chuyên bán vật tư nông nghiệp (thuốc bảo vệ thực vật, phân bón, hạt giống...).\n"
+            +
+            "Nhiệm vụ của bạn là hỗ trợ khách hàng trả lời các câu hỏi về sản phẩm, cách sử dụng, và thông tin cửa hàng.\n"
+            +
             "\n" +
             "Thông tin cửa hàng:\n" +
             "- Tên: Đại Lý Sáu Hiệp\n" +
@@ -47,7 +48,8 @@ public class GeminiService {
             "Phong cách trả lời:\n" +
             "- Thân thiện, nhiệt tình, chuyên nghiệp.\n" +
             "- Dùng tiếng Việt tự nhiên.\n" +
-            "- Dựa vào thông tin sản phẩm được cung cấp dưới đây để trả lời khách hàng. Nếu khách hỏi về sản phẩm không có trong danh sách, hãy nói khéo là cửa hàng hiện chưa có và mời họ liên hệ hotline.\n" +
+            "- Dựa vào thông tin sản phẩm được cung cấp dưới đây để trả lời khách hàng. Nếu khách hỏi về sản phẩm không có trong danh sách, hãy nói khéo là cửa hàng hiện chưa có và mời họ liên hệ hotline.\n"
+            +
             "- Ngắn gọn, súc tích, không trả lời quá dài dòng trừ khi cần thiết.\n" +
             "\n" +
             "DỮ LIỆU CỬA HÀNG (Sử dụng thông tin này để trả lời):\n";
@@ -75,7 +77,10 @@ public class GeminiService {
                         p.getName(),
                         p.getBrandName() != null ? p.getBrandName() : "N/A",
                         p.getPrice(),
-                        p.getDescription() != null ? p.getDescription().substring(0, Math.min(p.getDescription().length(), 100)).replace("\n", " ") + "..." : "",
+                        p.getDescription() != null
+                                ? p.getDescription().substring(0, Math.min(p.getDescription().length(), 100))
+                                        .replace("\n", " ") + "..."
+                                : "",
                         status));
             }
         } else {
@@ -92,10 +97,10 @@ public class GeminiService {
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         Map<String, Object> requestBody = new HashMap<>();
-        
+
         // Build dynamic system prompt with latest DB data
         String dynamicSystemPrompt = BASE_SYSTEM_PROMPT + buildContext();
-        
+
         String fullMessage = dynamicSystemPrompt + "\n\nKhách hàng hỏi: " + userMessage;
 
         Map<String, String> part = new HashMap<>();

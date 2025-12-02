@@ -11,4 +11,13 @@ import java.util.List;
 public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findByBuyer(Profile buyer);
     Optional<Order> findByOrderNo(String orderNo);
+
+    @org.springframework.data.jpa.repository.Query("SELECT COUNT(o) FROM Order o WHERE o.status != 'CANCELLED'")
+    long countTotalOrders();
+
+    @org.springframework.data.jpa.repository.Query("SELECT SUM(o.totalPay) FROM Order o WHERE o.status != 'CANCELLED'")
+    java.math.BigDecimal sumTotalRevenue();
+
+    @org.springframework.data.jpa.repository.Query("SELECT COUNT(o) FROM Order o WHERE o.status = 'PENDING'")
+    long countPendingOrders();
 }

@@ -10,6 +10,8 @@ export const metadata: Metadata = {
         "Cung cấp vật tư nông nghiệp, phân bón, thuốc bảo vệ thực vật chất lượng cao",
 };
 
+import Chatbot from "@/components/Chatbot";
+
 export default function RootLayout({
     children,
 }: Readonly<{
@@ -19,6 +21,7 @@ export default function RootLayout({
         <html lang="vi" suppressHydrationWarning>
             <body className={inter.className} suppressHydrationWarning>
                 {children}
+                <Chatbot />
             </body>
         </html>
     );

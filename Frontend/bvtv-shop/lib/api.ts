@@ -21,7 +21,10 @@ api.interceptors.request.use(
 
 // Interceptor cho response
 api.interceptors.response.use(
-    (response) => response,
+    (response) => {
+        console.log(`[API] ${response.config.method?.toUpperCase()} ${response.config.url}`, response.data);
+        return response;
+    },
     (error) => {
         if (typeof window !== "undefined") {
             if (error.response?.status === 401) {

@@ -1,85 +1,169 @@
 "use client";
 
+import { useState, useEffect } from "react";
+import api from "@/lib/api";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { Package, ShoppingCart, Users, TrendingUp } from "lucide-react";
+
 export default function AdminDashboardPage() {
+    const [stats, setStats] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        fetchStats();
+    }, []);
+
+    const fetchStats = async () => {
+        try {
+            const response = await api.get("/statistics/summary");
+            setStats(response.data);
+        } catch (error) {
+            console.error("Failed to fetch statistics:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const formatCurrency = (amount: number) => {
+        return new Intl.NumberFormat("vi-VN", {
+            style: "currency",
+            currency: "VND",
+        }).format(amount);
+    };
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center min-h-[400px]">
+                <div className="w-10 h-10 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin"></div>
+            </div>
+        );
+    }
+
     return (
         <div>
-            <h1 className="text-3xl font-bold text-gray-800 mb-6">
-                Trang quản trị
+            <h1 className="text-3xl font-bold text-gray-800 mb-8">
+                Tổng quan hệ thống
             </h1>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {/* Stats Cards */}
-                <div className="bg-white rounded-lg shadow-sm p-6">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-sm text-gray-600">
-                                Tổng sản phẩm
-                            </p>
-                            <p className="text-3xl font-bold text-gray-800">
-                                --
-                            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                {/* Revenue Card */}
+                <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                    <div className="flex items-center justify-between mb-4">
+                        <div className="p-3 bg-emerald-100 rounded-lg">
+                            <TrendingUp className="w-6 h-6 text-emerald-600" />
                         </div>
-                        <div className="text-4xl">📦</div>
+                        <span className="text-sm font-medium text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full">
+                            +12.5%
+                        </span>
                     </div>
+                    <p className="text-sm text-gray-500 mb-1">Tổng doanh thu</p>
+                    <h3 className="text-2xl font-bold text-gray-900">
+                        {stats ? formatCurrency(stats.totalRevenue) : "--"}
+                    </h3>
                 </div>
 
-                <div className="bg-white rounded-lg shadow-sm p-6">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-sm text-gray-600">
-                                Tổng đơn hàng
-                            </p>
-                            <p className="text-3xl font-bold text-gray-800">
-                                --
-                            </p>
+                {/* Orders Card */}
+                <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                    <div className="flex items-center justify-between mb-4">
+                        <div className="p-3 bg-blue-100 rounded-lg">
+                            <ShoppingCart className="w-6 h-6 text-blue-600" />
                         </div>
-                        <div className="text-4xl">🛒</div>
+                        <span className="text-sm font-medium text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-full">
+                            {stats?.pendingOrders} chờ xử lý
+                        </span>
                     </div>
+                    <p className="text-sm text-gray-500 mb-1">Tổng đơn hàng</p>
+                    <h3 className="text-2xl font-bold text-gray-900">
+                        {stats?.totalOrders || 0}
+                    </h3>
                 </div>
 
-                <div className="bg-white rounded-lg shadow-sm p-6">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-sm text-gray-600">
-                                Tổng khách hàng
-                            </p>
-                            <p className="text-3xl font-bold text-gray-800">
-                                --
-                            </p>
+                {/* Products Card */}
+                <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                    <div className="flex items-center justify-between mb-4">
+                        <div className="p-3 bg-purple-100 rounded-lg">
+                            <Package className="w-6 h-6 text-purple-600" />
                         </div>
-                        <div className="text-4xl">👥</div>
                     </div>
+                    <p className="text-sm text-gray-500 mb-1">Sản phẩm</p>
+                    <h3 className="text-2xl font-bold text-gray-900">
+                        {stats?.totalProducts || 0}
+                    </h3>
+                </div>
+
+                {/* Customers Card */}
+                <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                    <div className="flex items-center justify-between mb-4">
+                        <div className="p-3 bg-amber-100 rounded-lg">
+                            <Users className="w-6 h-6 text-amber-600" />
+                        </div>
+                    </div>
+                    <p className="text-sm text-gray-500 mb-1">Khách hàng</p>
+                    <h3 className="text-2xl font-bold text-gray-900">
+                        {stats?.totalCustomers || 0}
+                    </h3>
                 </div>
             </div>
 
-            <div className="mt-8 bg-white rounded-lg shadow-sm p-6">
-                <h2 className="text-xl font-semibold text-gray-800 mb-4">
-                    Hướng dẫn sử dụng
-                </h2>
-                <ul className="space-y-2 text-gray-600">
-                    <li>
-                        📦 <strong>Sản phẩm:</strong> Quản lý thông tin sản
-                        phẩm, giá, tồn kho
-                    </li>
-                    <li>
-                        📁 <strong>Danh mục:</strong> Quản lý danh mục sản phẩm
-                    </li>
-                    <li>
-                        🎟️ <strong>Mã giảm giá:</strong> Tạo và quản lý mã giảm
-                        giá
-                    </li>
-                    <li>
-                        📍 <strong>Khu vực:</strong> Quản lý thông tin khu vực
-                        giao hàng
-                    </li>
-                    <li>
-                        👥 <strong>Khách hàng:</strong> Xem thông tin khách hàng
-                    </li>
-                    <li>
-                        🛒 <strong>Đơn hàng:</strong> Xem và cập nhật trạng thái
-                        đơn hàng
-                    </li>
-                </ul>
+            {/* Charts Section */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                    <h3 className="text-lg font-bold text-gray-800 mb-6">Biểu đồ doanh thu (Demo)</h3>
+                    <div className="h-[300px] w-full">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <BarChart
+                                data={[
+                                    { name: 'T2', revenue: 4000000 },
+                                    { name: 'T3', revenue: 3000000 },
+                                    { name: 'T4', revenue: 2000000 },
+                                    { name: 'T5', revenue: 2780000 },
+                                    { name: 'T6', revenue: 1890000 },
+                                    { name: 'T7', revenue: 2390000 },
+                                    { name: 'CN', revenue: 3490000 },
+                                ]}
+                            >
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                                <XAxis dataKey="name" />
+                                <YAxis />
+                                <Tooltip formatter={(value) => formatCurrency(value as number)} />
+                                <Bar dataKey="revenue" fill="#059669" radius={[4, 4, 0, 0]} />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
+                </div>
+
+                <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                    <h3 className="text-lg font-bold text-gray-800 mb-6">Hướng dẫn nhanh</h3>
+                    <ul className="space-y-4">
+                        <li className="flex items-start gap-3">
+                            <div className="p-2 bg-emerald-50 rounded-lg mt-0.5">
+                                <Package className="w-4 h-4 text-emerald-600" />
+                            </div>
+                            <div>
+                                <p className="font-medium text-gray-900">Quản lý sản phẩm</p>
+                                <p className="text-sm text-gray-500">Thêm, sửa, xóa và cập nhật giá sản phẩm</p>
+                            </div>
+                        </li>
+                        <li className="flex items-start gap-3">
+                            <div className="p-2 bg-blue-50 rounded-lg mt-0.5">
+                                <ShoppingCart className="w-4 h-4 text-blue-600" />
+                            </div>
+                            <div>
+                                <p className="font-medium text-gray-900">Xử lý đơn hàng</p>
+                                <p className="text-sm text-gray-500">Xác nhận đơn hàng và cập nhật trạng thái giao hàng</p>
+                            </div>
+                        </li>
+                        <li className="flex items-start gap-3">
+                            <div className="p-2 bg-amber-50 rounded-lg mt-0.5">
+                                <Users className="w-4 h-4 text-amber-600" />
+                            </div>
+                            <div>
+                                <p className="font-medium text-gray-900">Quản lý khách hàng</p>
+                                <p className="text-sm text-gray-500">Xem thông tin và lịch sử mua hàng của khách</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
     );

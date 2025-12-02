@@ -5,9 +5,22 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import api from "@/lib/api";
 import BankTransferModal from "./checkQR/BankTransferModal";
-import CheckTransactionsDebug from "./checkQR/CheckTransactionsDebug";
 import { useCartStore } from "@/store/cart-store";
 import { useAuthStore } from "@/store/auth-store";
+import Header from "@/components/Header";
+import {
+  CreditCard,
+  MapPin,
+  Phone,
+  User,
+  FileText,
+  Ticket,
+  ArrowRight,
+  CheckCircle2,
+  Truck,
+  ShieldCheck,
+  Banknote
+} from "lucide-react";
 
 interface PaymentMethod {
   id: number;
@@ -18,7 +31,7 @@ interface PaymentMethod {
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { items, getTotalPrice, clearCart } = useCartStore();
+  const { items, getTotalPrice } = useCartStore();
   const { user } = useAuthStore();
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
   const [error, setError] = useState("");
@@ -48,20 +61,15 @@ export default function CheckoutPage() {
   useEffect(() => {
     try {
       sessionStorage.setItem("currentPaymentCode", paymentCode);
-    } catch (e) {}
+    } catch (e) { }
   }, [paymentCode]);
 
   const fetchPaymentMethods = async () => {
     try {
-      // Fetch ALL payment methods (online + offline).
-      // Previously we called `/payment-methods/online` which returned only online methods,
-      // causing the default selection to be an online method -> `isOnline=true` and
-      // `paymentTerm=PREPAID` when creating orders. That made COD orders saved incorrectly.
       const response = await api.get("/payment-methods/online");
       setPaymentMethods(response.data);
 
       if (response.data.length > 0) {
-        // Prefer an offline/COD method as default when available
         const offline = response.data.find((m: any) => m.forOnline === false);
         const defaultMethod = response.data[0];
         setFormData((prev) => ({
@@ -134,7 +142,6 @@ export default function CheckoutPage() {
         (m) => m.id === Number(formData.paymentMethodId)
       );
 
-      // build payload (but do not send yet if bank transfer)
       const itemsPayload = items.map((i) => ({
         productUnit: { id: i.productUnit.id },
         quantity: i.quantity,
@@ -161,10 +168,8 @@ export default function CheckoutPage() {
         items: itemsPayload,
       };
 
-      // If payment method id === 2 (bank transfer), show QR / wait for confirmation
       if (method?.id === 2) {
         setShowBankPaymentModal(true);
-        // keep payload in sessionStorage temporarily so creation step can reuse it if needed
         try {
           sessionStorage.setItem("pendingOrderPayload", JSON.stringify(payload));
         } catch (e) {
@@ -173,7 +178,6 @@ export default function CheckoutPage() {
         return;
       }
 
-      // otherwise create order immediately
       const resp = await api.post("/orders", payload);
       const created = resp.data;
 
@@ -192,10 +196,6 @@ export default function CheckoutPage() {
     }
   };
 
-  // Create order after bank transfer verification succeeds.
-  // This will create the order and save `lastOrder` in sessionStorage, but
-  // will NOT navigate — the modal will show success and user can click
-  // "Xem chi tiết đơn hàng" to go to the success page.
   const createOrderFromPending = async () => {
     setIsCreatingOrder(true);
     setError("");
@@ -209,7 +209,6 @@ export default function CheckoutPage() {
       }
 
       if (!payload) {
-        // fallback: build payload from current state
         const method = paymentMethods.find(
           (m) => m.id === Number(formData.paymentMethodId)
         );
@@ -247,7 +246,6 @@ export default function CheckoutPage() {
         console.warn("Cannot write lastOrder to sessionStorage", e);
       }
 
-      // keep modal open and let user click "Xem chi tiết đơn hàng"
       return created;
     } catch (err) {
       console.error("Create order after bank transfer error:", err);
@@ -261,34 +259,22 @@ export default function CheckoutPage() {
   const viewOrderDetails = () => {
     try {
       sessionStorage.removeItem("pendingOrderPayload");
-    } catch (e) {}
+    } catch (e) { }
     setShowBankPaymentModal(false);
     router.push("/checkout/success");
   };
 
-  const selectedMethod = paymentMethods.find(
-    (m) => m.id === Number(formData.paymentMethodId)
-  );
-
-  // Build a sanitized description for bank transfer: phone + name, no special chars
   const buildDescription = () => {
     const phone = (formData.deliveryPhone || "").toString();
     const name = (formData.deliveryName || "").toString();
     const raw = `${paymentCode} ${phone} ${name}`.trim();
-    // remove diacritics and non-alphanumeric characters except spaces
-    // normalize to NFKD to remove accents, then strip non-alphanum/spaces
     const normalized = raw.normalize("NFKD").replace(/\p{Diacritic}/gu, "");
     const cleaned = normalized.replace(/[^0-9a-zA-Z\s]/g, "");
-    // collapse multiple spaces
     return cleaned.replace(/\s+/g, " ").trim();
   };
 
   const transferDescription = buildDescription();
-
-  // Tổng phải trả sau khi áp mã giảm (dùng cho QR chuyển khoản)
   const payableAmount = getTotalPrice() - Number(appliedCoupon?.discountAmount || 0);
-
-  // NOTE: QR generation / display moved to the success page after order creation
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("vi-VN", {
@@ -302,244 +288,279 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white shadow-sm">
-        <div className="container mx-auto px-4 py-6">
-          <h1 className="text-3xl font-bold text-green-800">Thanh toán</h1>
+    <div className="min-h-screen bg-slate-50">
+      <Header />
+
+      <main className="container mx-auto px-4 py-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">
+            Thanh toán
+          </h1>
+          <p className="text-slate-500 mt-1">
+            Hoàn tất thông tin để đặt hàng
+          </p>
         </div>
-      </div>
 
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Checkout Form */}
-          <div className="lg:col-span-2">
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-xl font-bold text-gray-800 mb-6">
-                Thông tin giao hàng
-              </h2>
+          <div className="lg:col-span-8">
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+              <div className="p-6 border-b border-slate-100 bg-slate-50/50">
+                <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                  <MapPin className="w-5 h-5 text-emerald-600" />
+                  Thông tin giao hàng
+                </h2>
+              </div>
 
-              {error && (
-                <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-                  {error}
-                </div>
-              )}
-
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <label
-                    htmlFor="deliveryName"
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
-                    Họ và tên người nhận <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="deliveryName"
-                    name="deliveryName"
-                    required
-                    value={formData.deliveryName}
-                    onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                  />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="deliveryPhone"
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
-                    Số điện thoại <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="tel"
-                    id="deliveryPhone"
-                    name="deliveryPhone"
-                    required
-                    value={formData.deliveryPhone}
-                    onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                  />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="deliveryAddress"
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
-                    Địa chỉ giao hàng <span className="text-red-500">*</span>
-                  </label>
-                  <textarea
-                    id="deliveryAddress"
-                    name="deliveryAddress"
-                    required
-                    value={formData.deliveryAddress}
-                    onChange={handleChange}
-                    rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                  />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="paymentMethodId"
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
-                    Phương thức thanh toán{" "}
-                    <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    id="paymentMethodId"
-                    name="paymentMethodId"
-                    required
-                    value={formData.paymentMethodId}
-                    onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                  >
-                    {paymentMethods.map((method) => (
-                      <option key={method.id} value={method.id}>
-                        {method.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* QR will be displayed on the order success page if bank transfer is selected */}
-
-                <div>
-                  <label
-                    htmlFor="notes"
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
-                    Ghi chú đơn hàng
-                  </label>
-                  <textarea
-                    id="notes"
-                    name="notes"
-                    value={formData.notes}
-                    onChange={handleChange}
-                    rows={3}
-                    placeholder="Ghi chú về đơn hàng, ví dụ: thời gian hay chỉ dẫn địa điểm giao hàng chi tiết hơn."
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                  />
-                </div>
-
-                {/* Coupon */}
-                <div>
-                  <label htmlFor="coupon" className="block text-sm font-medium text-gray-700 mb-1">
-                    Mã giảm giá
-                  </label>
-                  <div className="flex gap-2">
-                    <input
-                      id="coupon"
-                      name="coupon"
-                      value={couponCode}
-                      onChange={handleCouponChange}
-                      placeholder="Nhập mã giảm giá"
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                    />
-                    <button
-                      type="button"
-                      onClick={applyCoupon}
-                      disabled={isApplyingCoupon}
-                      className="px-4 py-2 bg-green-600 text-white rounded-md disabled:opacity-50"
-                    >
-                      Áp dụng
-                    </button>
+              <div className="p-6">
+                {error && (
+                  <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-xl flex items-center gap-3">
+                    <div className="w-2 h-2 rounded-full bg-red-500" />
+                    {error}
                   </div>
-                  {couponError && <div className="mt-2 text-sm text-red-600">{couponError}</div>}
-                  {appliedCoupon && (
-                    <div className="mt-2 text-sm text-green-700">
-                      Đã áp dụng: {appliedCoupon.coupon.code} — {
-                        appliedCoupon.coupon.discountType === 'percent' ? (
-                          <>{appliedCoupon.coupon.discountValue}% — Giảm {formatCurrency(Number(appliedCoupon.discountAmount || 0))}</>
-                        ) : (
-                          <>Giảm {formatCurrency(Number(appliedCoupon.discountAmount || 0))}</>
-                        )
-                      }
-                    </div>
-                  )}
-                </div>
+                )}
 
-                <div className="flex gap-4 pt-4">
-                  <button
-                    type="submit"
-                    className="flex-1 bg-green-600 text-white py-3 px-4 rounded-md font-semibold hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
-                  >
-                    Xác nhận đặt hàng
-                  </button>
-                  <Link
-                    href="/cart"
-                    className="px-6 py-3 border border-gray-300 text-gray-700 rounded-md font-semibold hover:bg-gray-50"
-                  >
-                    Quay lại
-                  </Link>
-                </div>
-              </form>
+                <form id="checkout-form" onSubmit={handleSubmit} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                        <User className="w-4 h-4 text-slate-400" />
+                        Họ và tên
+                      </label>
+                      <input
+                        type="text"
+                        name="deliveryName"
+                        required
+                        value={formData.deliveryName}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all"
+                        placeholder="Nhập họ và tên người nhận"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                        <Phone className="w-4 h-4 text-slate-400" />
+                        Số điện thoại
+                      </label>
+                      <input
+                        type="tel"
+                        name="deliveryPhone"
+                        required
+                        value={formData.deliveryPhone}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all"
+                        placeholder="Nhập số điện thoại liên hệ"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                      <MapPin className="w-4 h-4 text-slate-400" />
+                      Địa chỉ nhận hàng
+                    </label>
+                    <textarea
+                      name="deliveryAddress"
+                      required
+                      value={formData.deliveryAddress}
+                      onChange={handleChange}
+                      rows={3}
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all resize-none"
+                      placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố..."
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                      <FileText className="w-4 h-4 text-slate-400" />
+                      Ghi chú đơn hàng (tùy chọn)
+                    </label>
+                    <textarea
+                      name="notes"
+                      value={formData.notes}
+                      onChange={handleChange}
+                      rows={2}
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all resize-none"
+                      placeholder="Ví dụ: Giao hàng trong giờ hành chính, gọi trước khi giao..."
+                    />
+                  </div>
+
+                  <div className="pt-6 border-t border-slate-100">
+                    <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+                      <CreditCard className="w-5 h-5 text-emerald-600" />
+                      Phương thức thanh toán
+                    </h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {paymentMethods.map((method) => (
+                        <label
+                          key={method.id}
+                          className={`relative flex items-center p-4 rounded-xl border-2 cursor-pointer transition-all ${formData.paymentMethodId === method.id.toString()
+                              ? "border-emerald-500 bg-emerald-50/50"
+                              : "border-slate-200 hover:border-emerald-200 hover:bg-slate-50"
+                            }`}
+                        >
+                          <input
+                            type="radio"
+                            name="paymentMethodId"
+                            value={method.id}
+                            checked={formData.paymentMethodId === method.id.toString()}
+                            onChange={handleChange}
+                            className="sr-only"
+                          />
+                          <div className="flex items-center gap-3">
+                            <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${formData.paymentMethodId === method.id.toString()
+                                ? "border-emerald-500 bg-emerald-500"
+                                : "border-slate-300"
+                              }`}>
+                              {formData.paymentMethodId === method.id.toString() && (
+                                <div className="w-2 h-2 rounded-full bg-white" />
+                              )}
+                            </div>
+                            <span className="font-medium text-slate-900">{method.name}</span>
+                          </div>
+                          {method.id === 2 && (
+                            <Banknote className="w-5 h-5 text-emerald-600 absolute right-4 opacity-50" />
+                          )}
+                          {method.id === 1 && (
+                            <Truck className="w-5 h-5 text-emerald-600 absolute right-4 opacity-50" />
+                          )}
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </form>
+              </div>
             </div>
           </div>
 
           {/* Order Summary */}
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-sm p-6 sticky top-4">
-              <h2 className="text-xl font-bold text-gray-800 mb-4">
+          <div className="lg:col-span-4">
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sticky top-24">
+              <h2 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+                <Ticket className="w-5 h-5 text-emerald-600" />
                 Đơn hàng của bạn
               </h2>
 
-              <div className="space-y-3 mb-6">
+              <div className="space-y-4 mb-6 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
                 {items.map((item) => (
                   <div
                     key={item.productUnit.id}
-                    className="flex justify-between text-sm"
+                    className="flex gap-4 py-3 border-b border-slate-50 last:border-0"
                   >
-                    <span className="text-gray-600">
-                      {item.productUnit.name} ({item.productUnit.shortName}) x
-                      {item.quantity}
-                    </span>
-                    <span className="font-semibold">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-slate-900 truncate">
+                        {item.productUnit.name}
+                      </p>
+                      <p className="text-xs text-slate-500 mt-0.5">
+                        {item.productUnit.shortName} x {item.quantity}
+                      </p>
+                    </div>
+                    <span className="text-sm font-semibold text-slate-700">
                       {formatCurrency(item.productUnit.price * item.quantity)}
                     </span>
                   </div>
                 ))}
               </div>
 
-              <div className="border-t pt-4 space-y-2">
-                <div className="flex justify-between text-gray-600">
-                  <span>Tạm tính:</span>
-                  <span>{formatCurrency(getTotalPrice())}</span>
+              {/* Coupon Section */}
+              <div className="mb-6 pt-4 border-t border-slate-100">
+                <label className="text-sm font-medium text-slate-700 mb-2 block">
+                  Mã giảm giá
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    value={couponCode}
+                    onChange={handleCouponChange}
+                    placeholder="Nhập mã giảm giá"
+                    className="flex-1 px-3 py-2 rounded-lg border border-slate-200 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={applyCoupon}
+                    disabled={isApplyingCoupon || !couponCode}
+                    className="px-4 py-2 bg-slate-900 text-white text-sm font-medium rounded-lg hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    Áp dụng
+                  </button>
                 </div>
-                <div className="flex justify-between text-gray-600">
-                  <span>Phí vận chuyển:</span>
-                  <span className="text-green-600">Miễn phí</span>
+                {couponError && (
+                  <p className="mt-2 text-xs text-red-500 flex items-center gap-1">
+                    <CheckCircle2 className="w-3 h-3" />
+                    {couponError}
+                  </p>
+                )}
+                {appliedCoupon && (
+                  <div className="mt-2 p-3 bg-emerald-50 border border-emerald-100 rounded-lg">
+                    <p className="text-xs font-medium text-emerald-700 flex items-center gap-1">
+                      <CheckCircle2 className="w-3 h-3" />
+                      Đã áp dụng mã: {appliedCoupon.coupon.code}
+                    </p>
+                    <p className="text-xs text-emerald-600 mt-1 pl-4">
+                      {appliedCoupon.coupon.discountType === 'percent'
+                        ? `Giảm ${appliedCoupon.coupon.discountValue}%`
+                        : `Giảm ${formatCurrency(Number(appliedCoupon.discountAmount || 0))}`
+                      }
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              <div className="space-y-3 pt-4 border-t border-slate-100">
+                <div className="flex justify-between text-slate-600">
+                  <span>Tạm tính</span>
+                  <span className="font-medium">{formatCurrency(getTotalPrice())}</span>
                 </div>
-                <div className="flex justify-between text-gray-600">
-                  <span>Giảm:</span>
-                  <span className="text-green-600">{formatCurrency(Number(appliedCoupon?.discountAmount || 0))}</span>
+                <div className="flex justify-between text-slate-600">
+                  <span>Phí vận chuyển</span>
+                  <span className="text-emerald-600 font-medium">Miễn phí</span>
                 </div>
-                <div className="flex justify-between text-lg font-bold text-gray-800 pt-2 border-t">
-                  <span>Tổng cộng:</span>
-                  <span className="text-green-600">
-                    {formatCurrency(getTotalPrice() - Number(appliedCoupon?.discountAmount || 0))}
+                {appliedCoupon && (
+                  <div className="flex justify-between text-emerald-600">
+                    <span>Giảm giá</span>
+                    <span className="font-medium">-{formatCurrency(Number(appliedCoupon?.discountAmount || 0))}</span>
+                  </div>
+                )}
+                <div className="flex justify-between items-end pt-3 border-t border-slate-100">
+                  <span className="text-slate-900 font-bold">Tổng cộng</span>
+                  <span className="text-2xl font-bold text-emerald-600">
+                    {formatCurrency(payableAmount)}
                   </span>
                 </div>
               </div>
-              {/* Debug tool (dev only) to fetch transactions from Casso */}
-              {/* {process.env.NODE_ENV !== 'production' && (
-                                <div className="mt-4">
-                                    <CheckTransactionsDebug />
-                                </div>
-                            )} */}
+
+              <button
+                type="submit"
+                form="checkout-form"
+                disabled={isSubmitting}
+                className="w-full mt-6 flex items-center justify-center gap-2 bg-emerald-600 text-white py-3.5 px-4 rounded-xl font-bold hover:bg-emerald-700 transition-all hover:shadow-lg hover:shadow-emerald-600/20 active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed"
+              >
+                {isSubmitting ? (
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : (
+                  <>
+                    Đặt hàng ngay
+                    <ArrowRight className="w-5 h-5" />
+                  </>
+                )}
+              </button>
+
+              <div className="mt-4 flex items-center justify-center gap-2 text-xs text-slate-500">
+                <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                Bảo mật thanh toán 100%
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </main>
+
       <BankTransferModal
         open={showBankPaymentModal}
         onClose={() => {
           setShowBankPaymentModal(false);
           try {
             sessionStorage.removeItem("pendingOrderPayload");
-          } catch (e) {}
+          } catch (e) { }
         }}
         onConfirm={createOrderFromPending}
         onViewDetails={viewOrderDetails}

@@ -158,10 +158,10 @@ export default function DashboardPage() {
                                                         <div>
                                                             <div className="flex items-center gap-2 text-sm text-gray-500 mb-0.5">
                                                                 <Calendar className="w-4 h-4" />
-                                                                {formatDate(order.orderDate)}
+                                                                {formatDate(order.createdAt)}
                                                             </div>
                                                             <div className="font-semibold text-gray-900">
-                                                                {order.orderItems?.length} sản phẩm
+                                                                {order.items?.length} sản phẩm
                                                             </div>
                                                         </div>
                                                     </div>
@@ -171,7 +171,7 @@ export default function DashboardPage() {
                                                 {/* Order Items */}
                                                 <div className="p-4 sm:p-6">
                                                     <div className="space-y-4 mb-6">
-                                                        {order.orderItems?.map((item: any, index: number) => (
+                                                        {order.items?.map((item: any, index: number) => (
                                                             <div key={index} className="flex items-start justify-between gap-4">
                                                                 <div className="flex items-center gap-3">
                                                                     <div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
@@ -182,12 +182,12 @@ export default function DashboardPage() {
                                                                         )}
                                                                     </div>
                                                                     <div>
-                                                                        <h4 className="text-sm font-medium text-gray-900 line-clamp-1">{item.productUnit?.product?.name}</h4>
-                                                                        <p className="text-xs text-gray-500">{item.productUnit?.unit}</p>
+                                                                        <h4 className="text-sm font-medium text-gray-900 line-clamp-1">{item.productUnit.name}</h4>
+                                        
                                                                     </div>
                                                                 </div>
                                                                 <div className="text-right">
-                                                                    <p className="text-sm font-medium text-gray-900">{formatCurrency(item.unitPrice)}</p>
+                                                                    <p className="text-sm font-medium text-gray-900">{formatCurrency(item.price)}</p>
                                                                     <p className="text-xs text-gray-500">x{item.quantity}</p>
                                                                 </div>
                                                             </div>

@@ -7,15 +7,11 @@ import { useAuthStore } from "@/store/auth-store";
 interface Coupon {
     id: number;
     code: string;
-    description?: string;
-    discountType: "PERCENTAGE" | "FIXED_AMOUNT";
+    discountType: string; // "percent" or "fixed"
     discountValue: number;
-    minOrderValue?: number;
-    maxDiscountAmount?: number;
-    startDate: string;
-    endDate: string;
+    minOrderTotal?: number;
+    expiryDate: string;
     usageLimit?: number;
-    usedCount: number;
     isActive: boolean;
 }
 
@@ -30,13 +26,10 @@ export default function CouponsAdminPage() {
     const [editingCoupon, setEditingCoupon] = useState<Coupon | null>(null);
     const [formData, setFormData] = useState({
         code: "",
-        description: "",
-        discountType: "PERCENTAGE" as "PERCENTAGE" | "FIXED_AMOUNT",
+        discountType: "percent" as "percent" | "fixed",
         discountValue: "",
-        minOrderValue: "",
-        maxDiscountAmount: "",
-        startDate: "",
-        endDate: "",
+        minOrderTotal: "",
+        expiryDate: "",
         usageLimit: "",
         isActive: true,
     });
@@ -62,17 +55,12 @@ export default function CouponsAdminPage() {
         try {
             const payload = {
                 code: formData.code.toUpperCase(),
-                description: formData.description,
                 discountType: formData.discountType,
                 discountValue: parseFloat(formData.discountValue),
-                minOrderValue: formData.minOrderValue
-                    ? parseFloat(formData.minOrderValue)
+                minOrderTotal: formData.minOrderTotal
+                    ? parseFloat(formData.minOrderTotal)
                     : undefined,
-                maxDiscountAmount: formData.maxDiscountAmount
-                    ? parseFloat(formData.maxDiscountAmount)
-                    : undefined,
-                startDate: formData.startDate,
-                endDate: formData.endDate,
+                expiryDate: formData.expiryDate || undefined,
                 usageLimit: formData.usageLimit
                     ? parseInt(formData.usageLimit)
                     : undefined,
@@ -98,13 +86,10 @@ export default function CouponsAdminPage() {
         setEditingCoupon(coupon);
         setFormData({
             code: coupon.code,
-            description: coupon.description || "",
-            discountType: coupon.discountType,
+            discountType: coupon.discountType || "percent",
             discountValue: coupon.discountValue?.toString() || "",
-            minOrderValue: coupon.minOrderValue?.toString() || "",
-            maxDiscountAmount: coupon.maxDiscountAmount?.toString() || "",
-            startDate: coupon.startDate?.split("T")[0] || "",
-            endDate: coupon.endDate?.split("T")[0] || "",
+            minOrderTotal: coupon.minOrderTotal?.toString() || "",
+            expiryDate: coupon.expiryDate?.split("T")[0] || "",
             usageLimit: coupon.usageLimit?.toString() || "",
             isActive: coupon.isActive ?? true,
         });
@@ -131,13 +116,10 @@ export default function CouponsAdminPage() {
     const resetForm = () => {
         setFormData({
             code: "",
-            description: "",
-            discountType: "PERCENTAGE",
+            discountType: "percent",
             discountValue: "",
-            minOrderValue: "",
-            maxDiscountAmount: "",
-            startDate: "",
-            endDate: "",
+            minOrderTotal: "",
+            expiryDate: "",
             usageLimit: "",
             isActive: true,
         });
@@ -152,8 +134,8 @@ export default function CouponsAdminPage() {
         return new Date(dateStr).toLocaleDateString("vi-VN");
     };
 
-    const isExpired = (endDate: string) => {
-        return new Date(endDate) < new Date();
+    const isExpired = (expiryDate: string) => {
+        return new Date(expiryDate) < new Date();
     };
 
     return (
@@ -209,10 +191,10 @@ export default function CouponsAdminPage() {
                                         Giá trị
                                     </th>
                                     <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
-                                        Thời gian
+                                        Hạn sử dụng
                                     </th>
                                     <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
-                                        Sử dụng
+                                        Giới hạn
                                     </th>
                                     <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
                                         Trạng thái
@@ -232,45 +214,37 @@ export default function CouponsAdminPage() {
                                             <div className="font-bold text-blue-600">
                                                 {coupon.code}
                                             </div>
-                                            <div className="text-sm text-gray-500">
-                                                {coupon.description}
-                                            </div>
                                         </td>
                                         <td className="px-4 py-3 text-sm">
-                                            {coupon.discountType ===
-                                            "PERCENTAGE"
+                                            {coupon.discountType === "percent"
                                                 ? "Phần trăm"
                                                 : "Số tiền"}
                                         </td>
                                         <td className="px-4 py-3 text-sm font-semibold text-green-600">
-                                            {coupon.discountType ===
-                                            "PERCENTAGE"
+                                            {coupon.discountType === "percent"
                                                 ? `${coupon.discountValue}%`
                                                 : `${coupon.discountValue.toLocaleString()}đ`}
                                         </td>
                                         <td className="px-4 py-3 text-sm">
                                             <div>
-                                                {formatDate(coupon.startDate)}
-                                            </div>
-                                            <div className="text-gray-500">
-                                                → {formatDate(coupon.endDate)}
+                                                Hết hạn:{" "}
+                                                {formatDate(coupon.expiryDate)}
                                             </div>
                                         </td>
                                         <td className="px-4 py-3 text-sm">
-                                            {coupon.usedCount} /{" "}
                                             {coupon.usageLimit || "∞"}
                                         </td>
                                         <td className="px-4 py-3">
                                             <span
                                                 className={`inline-block px-2 py-1 text-xs rounded-full ${
-                                                    isExpired(coupon.endDate)
+                                                    isExpired(coupon.expiryDate)
                                                         ? "bg-red-100 text-red-700"
                                                         : coupon.isActive
                                                         ? "bg-green-100 text-green-700"
                                                         : "bg-gray-100 text-gray-700"
                                                 }`}
                                             >
-                                                {isExpired(coupon.endDate)
+                                                {isExpired(coupon.expiryDate)
                                                     ? "Hết hạn"
                                                     : coupon.isActive
                                                     ? "Hoạt động"
@@ -350,16 +324,16 @@ export default function CouponsAdminPage() {
                                             setFormData({
                                                 ...formData,
                                                 discountType: e.target.value as
-                                                    | "PERCENTAGE"
-                                                    | "FIXED_AMOUNT",
+                                                    | "percent"
+                                                    | "fixed",
                                             })
                                         }
                                         className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                                     >
-                                        <option value="PERCENTAGE">
+                                        <option value="percent">
                                             Phần trăm (%)
                                         </option>
-                                        <option value="FIXED_AMOUNT">
+                                        <option value="fixed">
                                             Số tiền cố định
                                         </option>
                                     </select>
@@ -381,8 +355,7 @@ export default function CouponsAdminPage() {
                                             })
                                         }
                                         placeholder={
-                                            formData.discountType ===
-                                            "PERCENTAGE"
+                                            formData.discountType === "percent"
                                                 ? "10"
                                                 : "50000"
                                         }
@@ -397,34 +370,14 @@ export default function CouponsAdminPage() {
                                     <input
                                         type="number"
                                         step="0.01"
-                                        value={formData.minOrderValue}
+                                        value={formData.minOrderTotal}
                                         onChange={(e) =>
                                             setFormData({
                                                 ...formData,
-                                                minOrderValue: e.target.value,
+                                                minOrderTotal: e.target.value,
                                             })
                                         }
                                         placeholder="100000"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                                    />
-                                </div>
-
-                                <div className="mb-4">
-                                    <label className="block text-sm font-medium mb-2">
-                                        Giảm tối đa
-                                    </label>
-                                    <input
-                                        type="number"
-                                        step="0.01"
-                                        value={formData.maxDiscountAmount}
-                                        onChange={(e) =>
-                                            setFormData({
-                                                ...formData,
-                                                maxDiscountAmount:
-                                                    e.target.value,
-                                            })
-                                        }
-                                        placeholder="200000"
                                         className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                                     />
                                 </div>
@@ -449,57 +402,21 @@ export default function CouponsAdminPage() {
 
                                 <div className="mb-4">
                                     <label className="block text-sm font-medium mb-2">
-                                        Ngày bắt đầu *
+                                        Ngày hết hạn *
                                     </label>
                                     <input
                                         type="date"
                                         required
-                                        value={formData.startDate}
+                                        value={formData.expiryDate}
                                         onChange={(e) =>
                                             setFormData({
                                                 ...formData,
-                                                startDate: e.target.value,
+                                                expiryDate: e.target.value,
                                             })
                                         }
                                         className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                                     />
                                 </div>
-
-                                <div className="mb-4">
-                                    <label className="block text-sm font-medium mb-2">
-                                        Ngày kết thúc *
-                                    </label>
-                                    <input
-                                        type="date"
-                                        required
-                                        value={formData.endDate}
-                                        onChange={(e) =>
-                                            setFormData({
-                                                ...formData,
-                                                endDate: e.target.value,
-                                            })
-                                        }
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="mb-4 col-span-2">
-                                <label className="block text-sm font-medium mb-2">
-                                    Mô tả
-                                </label>
-                                <textarea
-                                    value={formData.description}
-                                    onChange={(e) =>
-                                        setFormData({
-                                            ...formData,
-                                            description: e.target.value,
-                                        })
-                                    }
-                                    rows={2}
-                                    placeholder="Giảm 10% cho đơn hàng từ 100k"
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                                />
                             </div>
 
                             <div className="mb-4">

@@ -156,4 +156,9 @@ public class OrderService {
         Profile buyer = profileService.findByEmail(email);
         return orderRepository.findByBuyer(buyer);
     }
+
+    public List<Order> findByCustomerId(java.util.UUID customerId) {
+        Profile customer = profileService.findById(customerId);
+        return orderRepository.findByBuyer(customer);
+    }
 }

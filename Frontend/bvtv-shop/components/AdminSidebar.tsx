@@ -12,7 +12,9 @@ import {
     ShoppingCart,
     ArrowLeftRight,
     LogOut,
-    LayoutDashboard
+    LayoutDashboard,
+    PackageCheck,
+    PackageX,
 } from "lucide-react";
 
 const menuItems = [
@@ -56,6 +58,21 @@ const menuItems = [
         href: "/dashboard/admin/inventory-movements",
         icon: ArrowLeftRight,
     },
+    {
+        label: "Phiếu nhập hàng",
+        href: "/dashboard/admin/goods-receipts",
+        icon: PackageCheck,
+    },
+    {
+        label: "Phiếu trả hàng",
+        href: "/dashboard/admin/customer-returns",
+        icon: PackageX,
+    },
+    {
+        label: "Phiếu trả NCC",
+        href: "/dashboard/admin/supplier-returns",
+        icon: PackageX,
+    },
 ];
 
 export default function AdminSidebar() {
@@ -72,11 +89,14 @@ export default function AdminSidebar() {
                     <div className="w-16 h-16 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 p-1 shadow-lg mb-3">
                         <div className="w-full h-full rounded-full bg-white flex items-center justify-center">
                             <span className="text-2xl font-bold text-emerald-600">
-                                {user.sortName?.charAt(0) || user.name?.charAt(0)}
+                                {user.sortName?.charAt(0) ||
+                                    user.name?.charAt(0)}
                             </span>
                         </div>
                     </div>
-                    <h3 className="font-bold text-gray-800 text-base mb-1">{user.name}</h3>
+                    <h3 className="font-bold text-gray-800 text-base mb-1">
+                        {user.name}
+                    </h3>
                     <p className="text-xs text-gray-500 font-medium bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
                         {user.role === "ADMIN" ? "Quản trị viên" : "Nhân viên"}
                     </p>
@@ -92,10 +112,11 @@ export default function AdminSidebar() {
                         <Link
                             key={item.href}
                             href={item.href}
-                            className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-medium text-sm ${isActive
+                            className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-medium text-sm ${
+                                isActive
                                     ? "bg-emerald-600 text-white shadow-md shadow-emerald-200"
                                     : "text-gray-600 hover:bg-emerald-50 hover:text-emerald-700"
-                                }`}
+                            }`}
                         >
                             <Icon className="w-5 h-5" />
                             {item.label}

@@ -21,6 +21,7 @@ create table if not exists orders (
   total_amount numeric not null,                                             -- Tổng tiền đơn hàng (đã bao gồm VAT)
   total_vat numeric not null default 0,                                      -- Tổng tiền VAT của đơn hàng (sum của vat_amount từ order_items)
   discount_total numeric not null default 0,                                 -- Tổng giảm giá (từ coupon hoặc chiết khấu)
+  total_pay numeric not null default 0,                                      -- Tổng tiền khách phải trả (total_amount - discount_total)
   status varchar(20) not null default 'PENDING' check (status in ('PENDING','CONFIRMED','SHIPPED','COMPLETED','CANCELLED')), -- Trạng thái
   payment_method_id bigint references payment_methods(id) on delete set null,   -- Phương thức thanh toán
   coupon_id bigint references coupons(id) on delete set null,                -- Mã giảm giá đã sử dụng
@@ -37,36 +38,36 @@ create table if not exists orders (
   created_at timestamp not null default now()                              -- Ngày tạo đơn
 );
 
--- TRIGGER FUNCTION: Tự động tạo order_no theo format ORD-YYYYMMDD-XXXX
+-- TRIGGER FUNCTION: Tự động tạo order_no theo format PBH-YYYYMMDD-XXXX
 create or replace function generate_order_no()
 returns trigger as $$
 declare
   date_str varchar(8);
   seq_num integer;
   padding integer;
-  new_no varchar(20);
+  new_no varchar(30);
 begin
   date_str := to_char(current_date, 'YYYYMMDD');
   
   -- Đếm số đơn trong ngày
   select coalesce(
-    max(cast(regexp_replace(order_no, '^ORD-\d{8}-', '') as integer)), 
+    max(cast(regexp_replace(order_no, '^PBH-\d{8}-', '') as integer)), 
     0
   ) + 1
   into seq_num
   from orders
-  where order_no like 'ORD-' || date_str || '-%';
+  where order_no like 'PBH-' || date_str || '-%';
   
   -- Tự động tăng padding khi cần
   if seq_num <= 9999 then
-    padding := 4;  -- ORD-20251016-0001
+    padding := 4;  -- PBH-20251016-0001
   elsif seq_num <= 99999 then
-    padding := 5;  -- ORD-20251016-10000
+    padding := 5;  -- PBH-20251016-10000
   else
-    padding := 6;  -- ORD-20251016-100000
+    padding := 6;  -- PBH-20251016-100000
   end if;
   
-  new_no := 'ORD-' || date_str || '-' || lpad(seq_num::text, padding, '0');
+  new_no := 'PBH-' || date_str || '-' || lpad(seq_num::text, padding, '0');
   new.order_no := new_no;
   
   return new;

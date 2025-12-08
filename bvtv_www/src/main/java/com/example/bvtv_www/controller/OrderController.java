@@ -23,6 +23,11 @@ public class OrderController {
         return ResponseEntity.ok(orderService.findMyOrders());
     }
 
+    @GetMapping("/by-customer/{customerId}")
+    public ResponseEntity<List<Order>> getByCustomer(@PathVariable java.util.UUID customerId) {
+        return ResponseEntity.ok(orderService.findByCustomerId(customerId));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Order> getById(@PathVariable Long id) {
         return ResponseEntity.ok(orderService.findById(id));

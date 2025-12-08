@@ -178,12 +178,6 @@ export enum InventoryMovementType {
     SALE = "SALE",
     RETURN_IN = "RETURN_IN",
     RETURN_OUT = "RETURN_OUT",
-    ADJUSTMENT_POS = "ADJUSTMENT_POS",
-    ADJUSTMENT_NEG = "ADJUSTMENT_NEG",
-    TRANSFER_IN = "TRANSFER_IN",
-    TRANSFER_OUT = "TRANSFER_OUT",
-    CONVERSION_OUT = "CONVERSION_OUT",
-    CONVERSION_IN = "CONVERSION_IN",
 }
 
 export interface InventoryMovement {
@@ -194,6 +188,106 @@ export interface InventoryMovement {
     quantity: number;
     refTable?: string;
     refId?: number;
+    createdAt: string;
+}
+
+// ============================================================
+// Warehouse Documents Types
+// ============================================================
+export enum DocumentStatus {
+    DRAFT = "DRAFT",
+    PENDING = "PENDING",
+    CONFIRMED = "CONFIRMED",
+    APPROVED = "APPROVED",
+    IN_TRANSIT = "IN_TRANSIT",
+    COMPLETED = "COMPLETED",
+    REJECTED = "REJECTED",
+    CANCELLED = "CANCELLED",
+}
+
+export enum PaymentStatus {
+    UNPAID = "UNPAID",
+    PARTIAL = "PARTIAL",
+    PAID = "PAID",
+}
+
+export interface Profile {
+    id: number;
+    name: string;
+    phone?: string;
+    email?: string;
+}
+
+// Phiếu Nhập Hàng (PNH)
+export interface GoodsReceiptItem {
+    id?: number;
+    productUnit: ProductUnit;
+    quantity: number;
+    unitCost: number; // Changed from unitPrice to match backend
+    lineTotal?: number; // Changed from totalPrice to match backend
+}
+
+export interface GoodsReceipt {
+    id?: number;
+    receiptNo?: string;
+    warehouse: Warehouse;
+    supplier?: Profile;
+    status: DocumentStatus;
+    paymentStatus: PaymentStatus;
+    notes?: string;
+    items: GoodsReceiptItem[];
+    totalAmount?: number;
+    totalVat?: number;
+    grandTotal?: number;
+    createdAt?: string;
+}
+
+// Phiếu Trả Hàng (PTH)
+export interface CustomerReturnItem {
+    id?: number;
+    orderItemId?: number;
+    productUnit: ProductUnit;
+    quantity: number;
+    refundAmount: number;
+}
+
+export interface CustomerReturn {
+    id?: number;
+    returnNo?: string;
+    order?: any;
+    customer?: Profile;
+    warehouse: Warehouse;
+    totalRefund?: number;
+    reason?: string;
+    status: DocumentStatus;
+    approvedBy?: Profile;
+    createdBy?: Profile;
+    createdAt?: string;
+    items: CustomerReturnItem[];
+}
+
+// Phiếu Trả Hàng NCC (PTHNCC)
+export interface SupplierReturnItem {
+    id?: number;
+    productUnit?: ProductUnit;
+    receiptItem?: { id: number };
+    quantity: number;
+    returnAmount: number;
+}
+
+export interface SupplierReturn {
+    id: number;
+    returnNo?: string;
+    warehouse?: Warehouse;
+    supplier?: Profile;
+    receipt?: { id: number; receiptNo?: string };
+    status: DocumentStatus;
+    reason?: string;
+    items?: SupplierReturnItem[];
+    totalReturn?: number;
+    totalVat?: number;
+    approvedBy?: Profile;
+    createdBy?: Profile;
     createdAt: string;
 }
 

@@ -478,6 +478,22 @@ INSERT INTO profiles (name, sort_name, phone, address, area_id, role, note, is_a
   ('Đại lý Nông nghiệp Tân Phú', 'ĐL Tân Phú', '0907890123', 'TT Tân Phú, Tân Phú, Đồng Nai',
    NULL, 'AGENT', 'Đại lý cấp 2, bán buôn', true);
 
+-- Demo customer account (email: khachhang@sauhiep.vn, password: 123)
+INSERT INTO profiles (
+  email, password_hash, name, sort_name, phone, address, area_id, role, is_active
+)
+SELECT
+  'khachhang@sauhiep.vn',
+  '$2a$10$X5wFBtLrL0aWnNqBqOqrXee5o8lUqbGxKDfxH2YrTLMG/yLLEYAi2', -- BCrypt hash of "123"
+  'Nguyễn Văn Khách',
+  'Anh Khách',
+  '0999999999',
+  'Ấp Bổn Thanh, xã Ngũ Lạc, phường Duyên Hải, tỉnh Vĩnh Long',
+  (SELECT id FROM areas WHERE name='Ấp Bổn Thanh' LIMIT 1),
+  'CUSTOMER',
+  true
+WHERE NOT EXISTS (SELECT 1 FROM profiles WHERE email = 'khachhang@sauhiep.vn');
+
 -- ================================================================================
 -- 9. SEED: Inventory Movements (Nhập kho ban đầu)
 -- ================================================================================

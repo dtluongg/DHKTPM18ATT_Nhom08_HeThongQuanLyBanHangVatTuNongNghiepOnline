@@ -134,6 +134,35 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT, "/api/warehouses/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/warehouses/**").hasRole("ADMIN")
                 
+                // ============================================================
+                // WAREHOUSE DOCUMENTS - Staff can manage, Admin can approve/delete
+                // ============================================================
+                // Goods Receipts - Phiếu Nhập Hàng (PNH)
+                .requestMatchers(HttpMethod.GET, "/api/goods-receipts/**").hasAnyRole("STAFF", "ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/goods-receipts").hasAnyRole("STAFF", "ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/goods-receipts/*").hasAnyRole("STAFF", "ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/goods-receipts/*/confirm").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/goods-receipts/*/cancel").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/goods-receipts/**").hasRole("ADMIN")
+                
+                // Customer Returns - Phiếu Trả Hàng (PTH)
+                .requestMatchers(HttpMethod.GET, "/api/customer-returns/**").hasAnyRole("STAFF", "ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/customer-returns").hasAnyRole("STAFF", "ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/customer-returns/*").hasAnyRole("STAFF", "ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/customer-returns/*/approve").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/customer-returns/*/reject").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/customer-returns/*/cancel").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/customer-returns/**").hasRole("ADMIN")
+                
+                // Supplier Returns - Phiếu Trả Hàng NCC (PTHNCC)
+                .requestMatchers(HttpMethod.GET, "/api/supplier-returns/**").hasAnyRole("STAFF", "ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/supplier-returns").hasAnyRole("STAFF", "ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/supplier-returns/*").hasAnyRole("STAFF", "ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/supplier-returns/*/approve").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/supplier-returns/*/reject").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/supplier-returns/*/cancel").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/supplier-returns/**").hasRole("ADMIN")
+                
                 // Store settings (ADMIN only)
                 .requestMatchers(HttpMethod.POST, "/api/store-settings/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/store-settings/**").hasRole("ADMIN")

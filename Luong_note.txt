@@ -29,3 +29,20 @@ file:
 -- 27/11/2025
 1. cần cập nhật thêm tính năng gửi mã đơn hàng về sđt or email
 2. cập nhật thêm áp mã giảm giá cho tổng đơn hàng. 
+
+-- 12/9/2025
+Update jwt for backend and Frontend
+
+env backend:
+GEMINI_KEY=AIzaSyCCxMg6DWMNfkzY1xMRPIfYR5J-y1YRnTM
+
+env frontend:
+NEXT_PUBLIC_API_URL=http://localhost:8080
+NEXT_PUBLIC_API_BASE=/api
+NEXT_PUBLIC_JWT_STORAGE_KEY=jwt_token
+
+NEXT_PUBLIC_BANK_ACCOUNT=V3CASS99999999
+NEXT_PUBLIC_BANK_NAME=BIDV
+NEXT_PUBLIC_BANK_OWNER=DoTienLuong
+NEXT_PUBLIC_API_CHECK_BANK=AK_CS.55de5ba0d3e611f0a73fcb966f33aa53.Q4K28MznzWkpYNENOQAIiSRULUxUzxhyH8tOmbga69BtUNB3ykPhSNbSAMLT01kK2H5eKqIY
+NEXT_PUBLIC_API_GET_TRANSACTION=https://oauth.casso.vn/v2/transactions

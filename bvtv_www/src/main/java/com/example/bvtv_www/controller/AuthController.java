@@ -1,5 +1,6 @@
 package com.example.bvtv_www.controller;
 
+import com.example.bvtv_www.config.JwtTokenProvider;
 import com.example.bvtv_www.dto.LoginRequest;
 import com.example.bvtv_www.dto.RegisterRequest;
 import com.example.bvtv_www.entity.Profile;
@@ -11,14 +12,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,6 +31,7 @@ public class AuthController {
     private final ProfileRepository profileRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final JwtTokenProvider jwtTokenProvider; // ✅ Thêm JWT provider
 
     /**
      * Đăng ký tài khoản mới (Customer)
@@ -62,10 +60,10 @@ public class AuthController {
     }
 
     /**
-     * Đăng nhập - Sử dụng AuthenticationManager để Spring Security nhận diện role
+     * Đăng nhập - Trả về JWT token
      */
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest request, HttpServletRequest httpRequest) {
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         try {
             // Authenticate user với Spring Security
             UsernamePasswordAuthenticationToken authToken = 
@@ -73,21 +71,16 @@ public class AuthController {
             
             Authentication authentication = authenticationManager.authenticate(authToken);
             
-            // Lưu authentication vào SecurityContext
-            SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
-            securityContext.setAuthentication(authentication);
-            SecurityContextHolder.setContext(securityContext);
-            
-            // Lưu SecurityContext vào session để persist qua các request
-            HttpSession session = httpRequest.getSession(true);
-            session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext);
+            // ✅ Generate JWT token
+            String token = jwtTokenProvider.generateToken(authentication);
             
             // Lấy thông tin user để trả về
             Profile profile = profileRepository.findByEmail(request.getEmail())
                     .orElseThrow(() -> new RuntimeException("User not found"));
             
-            // Trả về thông tin user
+            // ✅ Trả về JWT token + thông tin user
             Map<String, Object> response = new HashMap<>();
+            response.put("token", token);
             response.put("id", profile.getId());
             response.put("email", profile.getEmail());
             response.put("name", profile.getName());
@@ -104,14 +97,12 @@ public class AuthController {
     }
 
     /**
-     * Đăng xuất
+     * Đăng xuất - Stateless (không cần làm gì, client xóa token ở localStorage)
      */
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            session.invalidate();
-        }
+    public ResponseEntity<?> logout() {
+        // ✅ JWT là stateless, không cần invalidate session
+        // Client chỉ cần xóa token từ localStorage
         return ResponseEntity.ok(Map.of("message", "Đăng xuất thành công"));
     }
 

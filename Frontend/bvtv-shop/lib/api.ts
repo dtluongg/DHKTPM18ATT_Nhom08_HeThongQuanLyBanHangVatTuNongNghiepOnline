@@ -2,24 +2,29 @@ import axios from "axios";
 
 const api = axios.create({
     baseURL: `${process.env.NEXT_PUBLIC_API_URL}${process.env.NEXT_PUBLIC_API_BASE}`,
-    withCredentials: true, // Gửi cookies (cho session auth)
+    // JWT không dùng cookies/session
     headers: {
         "Content-Type": "application/json",
     },
 });
 
-// Interceptor cho request
+// Interceptor cho request - thêm JWT từ localStorage
 api.interceptors.request.use(
     (config) => {
-        // Có thể thêm token vào header nếu cần
+        if (typeof window !== "undefined") {
+            const storageKey = process.env.NEXT_PUBLIC_JWT_STORAGE_KEY || "jwt_token";
+            const token = localStorage.getItem(storageKey);
+            if (token) {
+                config.headers = config.headers || {};
+                (config.headers as Record<string, string>)["Authorization"] = `Bearer ${token}`;
+            }
+        }
         return config;
     },
-    (error) => {
-        return Promise.reject(error);
-    }
+    (error) => Promise.reject(error)
 );
 
-// Interceptor cho response
+// Interceptor cho response - xử lý 401/403
 api.interceptors.response.use(
     (response) => {
         console.log(`[API] ${response.config.method?.toUpperCase()} ${response.config.url}`, response.data);
@@ -27,15 +32,15 @@ api.interceptors.response.use(
     },
     (error) => {
         if (typeof window !== "undefined") {
-            if (error.response?.status === 401) {
-                // Unauthorized - Chưa đăng nhập
+            const status = error.response?.status;
+            if (status === 401) {
+                const storageKey = process.env.NEXT_PUBLIC_JWT_STORAGE_KEY || "jwt_token";
+                localStorage.removeItem(storageKey);
                 if (!window.location.pathname.includes("/login")) {
                     window.location.href = "/login";
                 }
-            } else if (error.response?.status === 403) {
-                // Forbidden - Không có quyền truy cập
+            } else if (status === 403) {
                 alert("Bạn không có quyền thực hiện thao tác này!");
-                // Có thể redirect về dashboard
                 if (window.location.pathname.includes("/dashboard/admin")) {
                     window.location.href = "/dashboard";
                 }

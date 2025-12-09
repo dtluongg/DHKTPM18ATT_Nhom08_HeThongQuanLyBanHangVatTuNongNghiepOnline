@@ -16,8 +16,8 @@ public class CorsConfig implements WebMvcConfigurer {
                     "https://yourdomain.com"      // Production domain (thay bằng domain thật sau)
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
-                .allowedHeaders("*")
-                .allowCredentials(true)           // ⭐ Quan trọng: Cho phép gửi cookies/session
+                .allowedHeaders("*")              // ✅ Cho phép tất cả headers (Authorization, Content-Type, etc.)
                 .maxAge(3600);                    // Cache preflight request 1 giờ
+                // ❌ Loại bỏ allowCredentials(true) vì JWT không cần cookies
     }
 }

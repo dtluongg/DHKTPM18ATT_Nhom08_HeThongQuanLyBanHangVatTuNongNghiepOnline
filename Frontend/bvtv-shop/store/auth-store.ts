@@ -5,6 +5,7 @@ import api from "@/lib/api";
 
 interface AuthStore {
     user: AuthUser | null;
+    token: string | null;
     isLoading: boolean;
     isAuthenticated: boolean;
     login: (email: string, password: string) => Promise<void>;
@@ -17,6 +18,7 @@ export const useAuthStore = create<AuthStore>()(
     persist(
         (set) => ({
             user: null,
+            token: null,
             isLoading: false,
             isAuthenticated: false,
 
@@ -32,11 +34,19 @@ export const useAuthStore = create<AuthStore>()(
                         email,
                         password,
                     });
+                    // Backend trả về { token, ...user }
+                    const storageKey = process.env.NEXT_PUBLIC_JWT_STORAGE_KEY || "jwt_token";
+                    const { token, ...userData } = response.data || {};
+                    console.log("Login successful:", response.data);
 
-                    // Backend trả về thông tin user ngay trong response
+                    if (typeof window !== "undefined" && token) {
+                        localStorage.setItem(storageKey, token);
+                    }
+
                     set({
-                        user: response.data,
-                        isAuthenticated: true,
+                        user: userData as AuthUser,
+                        token: token || null,
+                        isAuthenticated: !!token,
                         isLoading: false,
                     });
                 } catch (error) {
@@ -49,24 +59,36 @@ export const useAuthStore = create<AuthStore>()(
                 try {
                     await api.post("/auth/logout");
                 } finally {
-                    set({ user: null, isAuthenticated: false });
+                    const storageKey = process.env.NEXT_PUBLIC_JWT_STORAGE_KEY || "jwt_token";
+                    if (typeof window !== "undefined") {
+                        localStorage.removeItem(storageKey);
+                    }
+                    set({ user: null, token: null, isAuthenticated: false });
                 }
             },
 
             checkAuth: async () => {
                 try {
-                    const response = await api.get("/auth/status");
-                    if (response.data.authenticated) {
-                        const userResponse = await api.get("/auth/me");
-                        set({
-                            user: userResponse.data,
-                            isAuthenticated: true,
-                        });
-                    } else {
-                        set({ user: null, isAuthenticated: false });
+                    const storageKey = process.env.NEXT_PUBLIC_JWT_STORAGE_KEY || "jwt_token";
+                    const token = typeof window !== "undefined" ? localStorage.getItem(storageKey) : null;
+
+                    if (!token) {
+                        set({ user: null, token: null, isAuthenticated: false });
+                        return;
                     }
+
+                    const userResponse = await api.get("/auth/me");
+                    set({
+                        user: userResponse.data,
+                        token,
+                        isAuthenticated: true,
+                    });
                 } catch (error) {
-                    set({ user: null, isAuthenticated: false });
+                    const storageKey = process.env.NEXT_PUBLIC_JWT_STORAGE_KEY || "jwt_token";
+                    if (typeof window !== "undefined") {
+                        localStorage.removeItem(storageKey);
+                    }
+                    set({ user: null, token: null, isAuthenticated: false });
                 }
             },
         }),

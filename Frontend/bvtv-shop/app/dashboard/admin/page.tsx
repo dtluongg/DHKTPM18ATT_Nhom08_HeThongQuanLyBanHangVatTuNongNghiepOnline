@@ -2,8 +2,10 @@
 
 import { useState, useEffect } from "react";
 import api from "@/lib/api";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { Package, ShoppingCart, Users, TrendingUp } from "lucide-react";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { Package, ShoppingCart, Users, TrendingUp, AlertCircle } from "lucide-react";
+
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
 
 export default function AdminDashboardPage() {
     const [stats, setStats] = useState<any>(null);
@@ -106,21 +108,14 @@ export default function AdminDashboardPage() {
             </div>
 
             {/* Charts Section */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                    <h3 className="text-lg font-bold text-gray-800 mb-6">Biểu đồ doanh thu (Demo)</h3>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+                {/* Revenue Chart */}
+                <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 lg:col-span-2">
+                    <h3 className="text-lg font-bold text-gray-800 mb-6">Biểu đồ doanh thu (7 ngày qua)</h3>
                     <div className="h-[300px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart
-                                data={[
-                                    { name: 'T2', revenue: 4000000 },
-                                    { name: 'T3', revenue: 3000000 },
-                                    { name: 'T4', revenue: 2000000 },
-                                    { name: 'T5', revenue: 2780000 },
-                                    { name: 'T6', revenue: 1890000 },
-                                    { name: 'T7', revenue: 2390000 },
-                                    { name: 'CN', revenue: 3490000 },
-                                ]}
+                                data={stats?.revenueChart || []}
                             >
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} />
                                 <XAxis dataKey="name" />
@@ -129,6 +124,64 @@ export default function AdminDashboardPage() {
                                 <Bar dataKey="revenue" fill="#059669" radius={[4, 4, 0, 0]} />
                             </BarChart>
                         </ResponsiveContainer>
+                    </div>
+                </div>
+
+                {/* Order Status Distribution */}
+                <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                    <h3 className="text-lg font-bold text-gray-800 mb-6">Trạng thái đơn hàng</h3>
+                    <div className="h-[300px] w-full relative">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                                <Pie
+                                    data={stats?.orderStatusDistribution || []}
+                                    cx="50%"
+                                    cy="50%"
+                                    innerRadius={60}
+                                    outerRadius={80}
+                                    fill="#8884d8"
+                                    paddingAngle={5}
+                                    dataKey="value"
+                                >
+                                    {stats?.orderStatusDistribution?.map((entry: any, index: number) => (
+                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                    ))}
+                                </Pie>
+                                <Tooltip />
+                                <Legend />
+                            </PieChart>
+                        </ResponsiveContainer>
+                    </div>
+                </div>
+            </div>
+
+            {/* Bottom Section: Top Products & Quick Guide */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Top Selling Products */}
+                <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                    <h3 className="text-lg font-bold text-gray-800 mb-6">Sản phẩm bán chạy</h3>
+                    <div className="overflow-x-auto">
+                        <table className="w-full">
+                            <thead>
+                                <tr className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-100">
+                                    <th className="pb-3">Tên sản phẩm</th>
+                                    <th className="pb-3 text-right">Đã bán</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-100">
+                                {stats?.topSellingProducts?.map((product: any, index: number) => (
+                                    <tr key={index}>
+                                        <td className="py-3 text-sm text-gray-900 font-medium">{product.name}</td>
+                                        <td className="py-3 text-sm text-gray-600 text-right">{product.sold}</td>
+                                    </tr>
+                                ))}
+                                {!stats?.topSellingProducts?.length && (
+                                    <tr>
+                                        <td colSpan={2} className="py-4 text-center text-sm text-gray-500">Chưa có dữ liệu</td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 

@@ -31,7 +31,7 @@ public class GeminiService {
     private CategoryRepository categoryRepository;
 
     private final RestTemplate restTemplate = new RestTemplate();
-    private static final String GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=";
+    private static final String GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=";
 
     private static final String BASE_SYSTEM_PROMPT = "Bạn là trợ lý AI của \"Đại Lý Sáu Hiệp\" - một cửa hàng chuyên bán vật tư nông nghiệp (thuốc bảo vệ thực vật, phân bón, hạt giống...).\n"
             +

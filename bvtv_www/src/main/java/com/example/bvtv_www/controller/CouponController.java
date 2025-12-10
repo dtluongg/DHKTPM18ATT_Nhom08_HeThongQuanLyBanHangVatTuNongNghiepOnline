@@ -28,6 +28,17 @@ public class CouponController {
         return ResponseEntity.ok(couponService.create(coupon));
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Coupon> update(@PathVariable Long id, @RequestBody Coupon coupon) {
+        return ResponseEntity.ok(couponService.update(id, coupon));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        couponService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping("/validate/{code}")
     public ResponseEntity<java.util.Map<String, Object>> validate(
             @PathVariable String code,

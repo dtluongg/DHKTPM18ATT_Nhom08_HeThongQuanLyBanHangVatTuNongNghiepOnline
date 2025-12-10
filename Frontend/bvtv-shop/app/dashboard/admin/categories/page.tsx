@@ -160,9 +160,6 @@ export default function CategoriesAdminPage() {
                                     <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
                                         Mô tả
                                     </th>
-                                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
-                                        Trạng thái
-                                    </th>
                                     <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700">
                                         Thao tác
                                     </th>
@@ -182,19 +179,6 @@ export default function CategoriesAdminPage() {
                                         </td>
                                         <td className="px-4 py-3 text-sm text-gray-600">
                                             {category.description || "-"}
-                                        </td>
-                                        <td className="px-4 py-3">
-                                            <span
-                                                className={`inline-block px-2 py-1 text-xs rounded-full ${
-                                                    category.isActive
-                                                        ? "bg-green-100 text-green-700"
-                                                        : "bg-gray-100 text-gray-700"
-                                                }`}
-                                            >
-                                                {category.isActive
-                                                    ? "Hoạt động"
-                                                    : "Đã ẩn"}
-                                            </span>
                                         </td>
                                         <td className="px-4 py-3">
                                             <div className="flex items-center justify-center gap-2">
@@ -287,25 +271,6 @@ export default function CategoriesAdminPage() {
                                     rows={3}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                                 />
-                            </div>
-
-                            <div className="mb-4">
-                                <label className="flex items-center gap-2">
-                                    <input
-                                        type="checkbox"
-                                        checked={formData.isActive}
-                                        onChange={(e) =>
-                                            setFormData({
-                                                ...formData,
-                                                isActive: e.target.checked,
-                                            })
-                                        }
-                                        className="w-4 h-4"
-                                    />
-                                    <span className="text-sm font-medium">
-                                        Kích hoạt
-                                    </span>
-                                </label>
                             </div>
 
                             <div className="flex gap-3">

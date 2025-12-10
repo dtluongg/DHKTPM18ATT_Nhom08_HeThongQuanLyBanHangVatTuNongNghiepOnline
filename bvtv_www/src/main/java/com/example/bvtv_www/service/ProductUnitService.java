@@ -33,9 +33,18 @@ public class ProductUnitService {
     public ProductUnit update(Long id, ProductUnit product) {
         ProductUnit existing = findById(id);
         existing.setName(product.getName());
+        existing.setShortName(product.getShortName());
+        existing.setBrandName(product.getBrandName());
+        existing.setDescription(product.getDescription());
+        existing.setCategory(product.getCategory());
         existing.setPrice(product.getPrice());
         existing.setCreditPrice(product.getCreditPrice());
+        existing.setVatRate(product.getVatRate());
+        existing.setSku(product.getSku());
+        existing.setBarcode(product.getBarcode());
         existing.setStock(product.getStock());
+        existing.setIsSelling(product.getIsSelling());
+        existing.setIsActive(product.getIsActive());
         return productUnitRepository.save(existing);
     }
 

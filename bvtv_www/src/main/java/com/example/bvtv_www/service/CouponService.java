@@ -33,6 +33,25 @@ public class CouponService {
         return couponRepository.findById(id).orElseThrow(() -> new RuntimeException("Coupon not found"));
     }
 
+    public Coupon update(Long id, Coupon coupon) {
+        Coupon existing = findById(id);
+        existing.setCode(coupon.getCode());
+        existing.setDiscountType(coupon.getDiscountType());
+        existing.setDiscountValue(coupon.getDiscountValue());
+        existing.setMinOrderTotal(coupon.getMinOrderTotal());
+        existing.setExpiryDate(coupon.getExpiryDate());
+        existing.setUsageLimit(coupon.getUsageLimit());
+        existing.setIsActive(coupon.getIsActive());
+        return couponRepository.save(existing);
+    }
+
+    public void delete(Long id) {
+        // Soft delete: set isActive = false
+        Coupon existing = findById(id);
+        existing.setIsActive(false);
+        couponRepository.save(existing);
+    }
+
     public Coupon decrementUsageIfLimited(Coupon coupon) {
         if (coupon.getUsageLimit() != null && coupon.getUsageLimit() > 0) {
             coupon.setUsageLimit(coupon.getUsageLimit() - 1);

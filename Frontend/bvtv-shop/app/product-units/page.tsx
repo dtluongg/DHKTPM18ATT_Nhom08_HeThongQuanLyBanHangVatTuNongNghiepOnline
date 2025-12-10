@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import api from "@/lib/api";
 import { ProductUnit } from "@/types";
@@ -9,6 +10,7 @@ import Header from "@/components/Header";
 import { Search, Filter, ShoppingCart, Tag, Leaf } from "lucide-react";
 
 export default function ProductsPage() {
+    const router = useRouter();
     const [products, setProducts] = useState<ProductUnit[]>([]);
     const [categories, setCategories] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -61,7 +63,9 @@ export default function ProductsPage() {
         if (res.action === "added") {
             setNotify({ text: `Đã thêm “${product.name}” vào giỏ hàng` });
         } else {
-            setNotify({ text: `Cập nhật số lượng “${product.name}”: ${res.quantity}` });
+            setNotify({
+                text: `Cập nhật số lượng “${product.name}”: ${res.quantity}`,
+            });
         }
     };
 
@@ -109,7 +113,9 @@ export default function ProductsPage() {
                                 <input
                                     type="text"
                                     value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    onChange={(e) =>
+                                        setSearchQuery(e.target.value)
+                                    }
                                     placeholder="Tìm kiếm theo tên sản phẩm, mô tả..."
                                     className="block w-full pl-10 pr-3 py-2.5 border border-slate-200 rounded-lg bg-slate-50 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
                                 />
@@ -122,7 +128,9 @@ export default function ProductsPage() {
                                 </div>
                                 <select
                                     value={selectedCategory}
-                                    onChange={(e) => setSelectedCategory(e.target.value)}
+                                    onChange={(e) =>
+                                        setSelectedCategory(e.target.value)
+                                    }
                                     className="block w-full pl-10 pr-10 py-2.5 border border-slate-200 rounded-lg bg-slate-50 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all appearance-none cursor-pointer"
                                 >
                                     <option value="all">Tất cả danh mục</option>
@@ -133,8 +141,18 @@ export default function ProductsPage() {
                                     ))}
                                 </select>
                                 <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                    <svg className="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                    <svg
+                                        className="h-4 w-4 text-slate-400"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M19 9l-7 7-7-7"
+                                        />
                                     </svg>
                                 </div>
                             </div>
@@ -146,7 +164,10 @@ export default function ProductsPage() {
                 {loading ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         {[...Array(8)].map((_, i) => (
-                            <div key={i} className="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 h-[380px] animate-pulse">
+                            <div
+                                key={i}
+                                className="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 h-[380px] animate-pulse"
+                            >
                                 <div className="w-full h-48 bg-slate-200 rounded-xl mb-4" />
                                 <div className="h-6 bg-slate-200 rounded w-3/4 mb-2" />
                                 <div className="h-4 bg-slate-200 rounded w-1/2 mb-4" />
@@ -159,15 +180,22 @@ export default function ProductsPage() {
                         <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-100 mb-4">
                             <Search className="w-8 h-8 text-slate-400" />
                         </div>
-                        <h3 className="text-lg font-medium text-slate-900">Không tìm thấy sản phẩm</h3>
-                        <p className="text-slate-500 mt-1">Thử thay đổi từ khóa hoặc bộ lọc danh mục</p>
+                        <h3 className="text-lg font-medium text-slate-900">
+                            Không tìm thấy sản phẩm
+                        </h3>
+                        <p className="text-slate-500 mt-1">
+                            Thử thay đổi từ khóa hoặc bộ lọc danh mục
+                        </p>
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         {filteredProducts.map((product) => (
                             <div
                                 key={product.id}
-                                className="group bg-white rounded-2xl shadow-sm border border-slate-200 hover:shadow-lg hover:border-emerald-500/30 transition-all duration-300 flex flex-col overflow-hidden"
+                                className="group bg-white rounded-2xl shadow-sm border border-slate-200 hover:shadow-lg hover:border-emerald-500/30 transition-all duration-300 flex flex-col overflow-hidden cursor-pointer"
+                                onClick={() =>
+                                    router.push(`/product-units/${product.id}`)
+                                }
                             >
                                 {/* Image Placeholder */}
                                 <div className="aspect-[4/3] bg-slate-100 relative overflow-hidden">
@@ -194,34 +222,49 @@ export default function ProductsPage() {
 
                                 <div className="p-5 flex flex-col flex-grow">
                                     <div className="mb-4">
-                                        <h3 className="text-lg font-bold text-slate-800 line-clamp-2 group-hover:text-emerald-700 transition-colors" title={product.name}>
+                                        <h3
+                                            className="text-lg font-bold text-slate-800 line-clamp-2 group-hover:text-emerald-700 transition-colors"
+                                            title={product.name}
+                                        >
                                             {product.name}
                                         </h3>
                                         <p className="text-sm text-slate-500 mt-1 line-clamp-2 min-h-[2.5em]">
-                                            {product.description || "Chưa có mô tả sản phẩm"}
+                                            {product.description ||
+                                                "Chưa có mô tả sản phẩm"}
                                         </p>
                                     </div>
 
                                     <div className="mt-auto space-y-4">
                                         <div className="flex items-end justify-between">
                                             <div>
-                                                <p className="text-sm text-slate-400 font-medium">Giá bán</p>
+                                                <p className="text-sm text-slate-400 font-medium">
+                                                    Giá bán
+                                                </p>
                                                 <p className="text-xl font-bold text-emerald-600">
-                                                    {formatCurrency(product.price)}
+                                                    {formatCurrency(
+                                                        product.price
+                                                    )}
                                                 </p>
                                             </div>
                                             {product.creditPrice && (
                                                 <div className="text-right">
-                                                    <p className="text-xs text-slate-400">Giá công nợ</p>
+                                                    <p className="text-xs text-slate-400">
+                                                        Giá công nợ
+                                                    </p>
                                                     <p className="text-sm font-semibold text-slate-600">
-                                                        {formatCurrency(product.creditPrice)}
+                                                        {formatCurrency(
+                                                            product.creditPrice
+                                                        )}
                                                     </p>
                                                 </div>
                                             )}
                                         </div>
 
                                         <button
-                                            onClick={() => handleAddToCart(product)}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleAddToCart(product);
+                                            }}
                                             className="w-full flex items-center justify-center gap-2 bg-slate-900 hover:bg-emerald-600 text-white py-2.5 px-4 rounded-xl font-semibold transition-all duration-200 active:scale-95"
                                         >
                                             <ShoppingCart className="w-4 h-4" />
